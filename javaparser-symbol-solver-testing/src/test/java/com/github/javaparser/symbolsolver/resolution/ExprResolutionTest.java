@@ -21,10 +21,6 @@
 
 package com.github.javaparser.symbolsolver.resolution;
 
-import static com.github.javaparser.StaticJavaParser.parse;
-import static com.github.javaparser.resolution.types.ResolvedPrimitiveType.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.resolution.TypeSolver;
@@ -32,9 +28,14 @@ import com.github.javaparser.resolution.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static com.github.javaparser.StaticJavaParser.parse;
+import static com.github.javaparser.resolution.types.ResolvedPrimitiveType.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ExprResolutionTest extends AbstractResolutionTest {
 
@@ -59,13 +60,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsDoubleAndByte() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  byte b = (byte)0; "
-                + "  double d = 0.0; "
-                + "  System.out.println( d + b );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  byte b = (byte)0; "
+                        + "  double d = 0.0; "
+                        + "  System.out.println( d + b );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -75,13 +77,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsByteAndDouble() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  byte b = (byte)0; "
-                + "  double d = 0.0; "
-                + "  System.out.println( b + d );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  byte b = (byte)0; "
+                        + "  double d = 0.0; "
+                        + "  System.out.println( b + d );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -91,13 +94,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsDoubleAndChar() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  char c = 'a'; "
-                + "  double d = 0.0; "
-                + "  System.out.println( d + c );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  char c = 'a'; "
+                        + "  double d = 0.0; "
+                        + "  System.out.println( d + c );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -107,13 +111,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsCharAndDouble() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  char c = 'a'; "
-                + "  double d = 0.0; "
-                + "  System.out.println( c + d );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  char c = 'a'; "
+                        + "  double d = 0.0; "
+                        + "  System.out.println( c + d );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -123,13 +128,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsDoubleAndInt() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  int i = 0; "
-                + "  double d = 0.0; "
-                + "  System.out.println( d + i );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  int i = 0; "
+                        + "  double d = 0.0; "
+                        + "  System.out.println( d + i );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -139,13 +145,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsIntAndDouble() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  int i = 0; "
-                + "  double d = 0.0; "
-                + "  System.out.println( i + d );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  int i = 0; "
+                        + "  double d = 0.0; "
+                        + "  System.out.println( i + d );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -155,13 +162,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsfloatAndByte() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  byte b = (byte)0; "
-                + "  float f = 0.0f; "
-                + "  System.out.println( f + b );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  byte b = (byte)0; "
+                        + "  float f = 0.0f; "
+                        + "  System.out.println( f + b );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -171,13 +179,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsByteAndfloat() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  byte b = (byte)0; "
-                + "  float f = 0.0f; "
-                + "  System.out.println( b + f );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  byte b = (byte)0; "
+                        + "  float f = 0.0f; "
+                        + "  System.out.println( b + f );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -187,13 +196,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsfloatAndChar() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  char c = 'a'; "
-                + "  float f = 0.0f; "
-                + "  System.out.println( f + c );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  char c = 'a'; "
+                        + "  float f = 0.0f; "
+                        + "  System.out.println( f + c );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -203,13 +213,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsCharAndfloat() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  char c = 'a'; "
-                + "  float f = 0.0f; "
-                + "  System.out.println( c + f );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  char c = 'a'; "
+                        + "  float f = 0.0f; "
+                        + "  System.out.println( c + f );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -219,13 +230,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsfloatAndInt() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  int i = 0; "
-                + "  float f = 0.0f; "
-                + "  System.out.println( f + i );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  int i = 0; "
+                        + "  float f = 0.0f; "
+                        + "  System.out.println( f + i );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -235,13 +247,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsIntAndfloat() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  int i = 0; "
-                + "  float f = 0.0f; "
-                + "  System.out.println( i + f );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  int i = 0; "
+                        + "  float f = 0.0f; "
+                        + "  System.out.println( i + f );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -251,13 +264,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsDoubleAndFloat() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  float f = 0.0f; "
-                + "  double d = 0.0; "
-                + "  System.out.println( d + f );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  float f = 0.0f; "
+                        + "  double d = 0.0; "
+                        + "  System.out.println( d + f );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -267,13 +281,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsFloatAndDouble() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  float f = 0.0f; "
-                + "  double d = 0.0; "
-                + "  System.out.println( f + d );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  float f = 0.0f; "
+                        + "  double d = 0.0; "
+                        + "  System.out.println( f + d );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -283,13 +298,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1589
     @Test
     void typeOfPlusExpressionsByteAndChar() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  byte b = (byte)0; "
-                + "  char c = 'a'; "
-                + "  System.out.println( b + c );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  byte b = (byte)0; "
+                        + "  char c = 'a'; "
+                        + "  System.out.println( b + c );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -298,13 +314,14 @@ class ExprResolutionTest extends AbstractResolutionTest {
 
     @Test
     void typeOfPlusExpressionsCharAndByte() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  byte b = (byte)0; "
-                + "  char c = 'a'; "
-                + "  System.out.println( c + b );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  byte b = (byte)0; "
+                        + "  char c = 'a'; "
+                        + "  System.out.println( c + b );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -314,12 +331,13 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1731
     @Test
     void typeOfPlusExpressionsDoubleAndString() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  String s1 = \"string1\";"
-                + "  System.out.println( 1.0 + \"a_text\" );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  String s1 = \"string1\";"
+                        + "  System.out.println( 1.0 + \"a_text\" );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -329,12 +347,13 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1731
     @Test
     void typeOfPlusExpressionsIntAndString() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  String s1 = \"string1\";"
-                + "  System.out.println( 1 + s1 );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  String s1 = \"string1\";"
+                        + "  System.out.println( 1 + s1 );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -344,12 +363,13 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1731
     @Test
     void typeOfPlusExpressionsCharAndString() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  String s1 = \"string1\";"
-                + "  System.out.println( s1.charAt(2) + s1 );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  String s1 = \"string1\";"
+                        + "  System.out.println( s1.charAt(2) + s1 );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -359,12 +379,13 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1731
     @Test
     void typeOfPlusExpressionsStringAndDouble() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  String s1 = \"string1\";"
-                + "  System.out.println( \"a_text\" + 1.0 );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  String s1 = \"string1\";"
+                        + "  System.out.println( \"a_text\" + 1.0 );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -374,12 +395,13 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1731
     @Test
     void typeOfPlusExpressionsStringAndInt() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  String s1 = \"string1\";"
-                + "  System.out.println( s1 + 1 );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  String s1 = \"string1\";"
+                        + "  System.out.println( s1 + 1 );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
@@ -389,15 +411,17 @@ class ExprResolutionTest extends AbstractResolutionTest {
     // Related to issue 1731
     @Test
     void typeOfPlusExpressionsStringAndChar() {
-        CompilationUnit compilationUnit = parse("public class Class1 {"
-                + " public void method1() {"
-                + "  String s1 = \"string1\";"
-                + "  System.out.println( s1 + s1.charAt(2) );"
-                + " }"
-                + "}");
+        CompilationUnit compilationUnit = parse(
+                "public class Class1 {"
+                        + " public void method1() {"
+                        + "  String s1 = \"string1\";"
+                        + "  System.out.println( s1 + s1.charAt(2) );"
+                        + " }"
+                        + "}");
 
         List<BinaryExpr> bExprs = compilationUnit.findAll(BinaryExpr.class);
         assertEquals(1, bExprs.size());
         assertEquals(stringType, JavaParserFacade.get(ts).getType(bExprs.get(0)));
     }
+
 }

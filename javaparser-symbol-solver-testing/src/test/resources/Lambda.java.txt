@@ -56,10 +56,5 @@ public class Agenda {
     public void testCast(){
         Object a = (Lambda) p -> p.toLowerCase();
     }
-    
-    public void testInAssignExpr() {
-    	Lambda a;
-    	a = p -> p.toLowerCase();
-    }
 
 }

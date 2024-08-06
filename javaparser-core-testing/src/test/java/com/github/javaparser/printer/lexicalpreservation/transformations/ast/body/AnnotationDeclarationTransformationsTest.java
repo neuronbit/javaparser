@@ -21,17 +21,18 @@
 
 package com.github.javaparser.printer.lexicalpreservation.transformations.ast.body;
 
-import static com.github.javaparser.ast.Modifier.Keyword.PROTECTED;
-import static com.github.javaparser.ast.Modifier.Keyword.PUBLIC;
-import static com.github.javaparser.ast.Modifier.createModifierList;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.printer.lexicalpreservation.AbstractLexicalPreservingTest;
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
+import static com.github.javaparser.ast.Modifier.Keyword.PROTECTED;
+import static com.github.javaparser.ast.Modifier.Keyword.PUBLIC;
+import static com.github.javaparser.ast.Modifier.createModifierList;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Transforming AnnotationDeclaration and verifying the LexicalPreservation works as expected.
@@ -82,9 +83,7 @@ class AnnotationDeclarationTransformationsTest extends AbstractLexicalPreserving
     @Test
     void addingMember() throws IOException {
         considerExample("AnnotationDeclaration_Example3_original");
-        cu.getAnnotationDeclarationByName("ClassPreamble")
-                .get()
-                .addMember(new AnnotationMemberDeclaration(new NodeList<>(), PrimitiveType.intType(), "foo", null));
+        cu.getAnnotationDeclarationByName("ClassPreamble").get().addMember(new AnnotationMemberDeclaration(new NodeList<>(), PrimitiveType.intType(), "foo", null));
         assertTransformed("AnnotationDeclaration_Example5", cu);
     }
 
@@ -98,9 +97,7 @@ class AnnotationDeclarationTransformationsTest extends AbstractLexicalPreserving
     @Test
     void replacingMember() throws IOException {
         considerExample("AnnotationDeclaration_Example3_original");
-        cu.getAnnotationDeclarationByName("ClassPreamble")
-                .get()
-                .setMember(2, new AnnotationMemberDeclaration(new NodeList<>(), PrimitiveType.intType(), "foo", null));
+        cu.getAnnotationDeclarationByName("ClassPreamble").get().setMember(2, new AnnotationMemberDeclaration(new NodeList<>(), PrimitiveType.intType(), "foo", null));
         assertTransformed("AnnotationDeclaration_Example7", cu);
     }
 
@@ -116,11 +113,7 @@ class AnnotationDeclarationTransformationsTest extends AbstractLexicalPreserving
     @Test
     void removingJavadoc() throws IOException {
         considerExample("AnnotationDeclaration_Example9_original");
-        boolean removed = cu.getAnnotationDeclarationByName("ClassPreamble")
-                .get()
-                .getJavadocComment()
-                .get()
-                .remove();
+        boolean removed = cu.getAnnotationDeclarationByName("ClassPreamble").get().getJavadocComment().get().remove();
         assertTrue(removed);
         assertTransformed("AnnotationDeclaration_Example9", cu);
     }
@@ -128,9 +121,8 @@ class AnnotationDeclarationTransformationsTest extends AbstractLexicalPreserving
     @Test
     void replacingJavadoc() throws IOException {
         considerExample("AnnotationDeclaration_Example9_original");
-        cu.getAnnotationDeclarationByName("ClassPreamble")
-                .get()
-                .setJavadocComment("Super extra cool this annotation!!!");
+        cu.getAnnotationDeclarationByName("ClassPreamble").get().setJavadocComment("Super extra cool this annotation!!!");
         assertTransformed("AnnotationDeclaration_Example10", cu);
     }
+
 }

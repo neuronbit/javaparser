@@ -17,6 +17,3 @@ popd
 if [ "$?" -ne 0 ]; then
     exit 1
 fi
-
-# Format code to make diff more understandable
-./mvnw spotless:apply

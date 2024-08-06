@@ -55,7 +55,10 @@ public class ProperLowerBound {
 
     @Override
     public String toString() {
-        return "ProperLowerBound{" + "inferenceVariable=" + inferenceVariable + ", properType=" + properType + '}';
+        return "ProperLowerBound{" +
+                "inferenceVariable=" + inferenceVariable +
+                ", properType=" + properType +
+                '}';
     }
 
     public InferenceVariable getInferenceVariable() {

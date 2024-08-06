@@ -21,12 +21,19 @@
 
 package com.github.javaparser.symbolsolver.reflectionmodel;
 
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.TypeSolver;
+import com.github.javaparser.resolution.declarations.ResolvedAnnotationExpr;
 import com.github.javaparser.resolution.declarations.ResolvedEnumConstantDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.resolution.types.ResolvedType;
+
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ReflectionEnumConstantDeclaration implements ResolvedEnumConstantDeclaration {
 
@@ -51,5 +58,25 @@ public class ReflectionEnumConstantDeclaration implements ResolvedEnumConstantDe
         Class<?> enumClass = enumConstant.getDeclaringClass();
         ResolvedReferenceTypeDeclaration typeDeclaration = new ReflectionEnumDeclaration(enumClass, typeSolver);
         return new ReferenceTypeImpl(typeDeclaration);
+    }
+
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        if (typeName.contains(".")) {
+            String simpleName = typeName.substring(typeName.lastIndexOf('.') + 1);
+            return Optional.of(Arrays.stream(this.enumConstant.getAnnotations())
+                    .filter(a -> a.annotationType().getName().equals(simpleName) || a.annotationType().getCanonicalName().equals(typeName))
+                    .map(ReflectionResolvedAnnotationExpr::new)
+                    .collect(Collectors.toList()));
+        } else {
+            return Optional.of(Arrays.stream(this.enumConstant.getAnnotations())
+                    .filter(a -> a.annotationType().getName().equals(typeName))
+                    .map(ReflectionResolvedAnnotationExpr::new)
+                    .collect(Collectors.toList()));
+        }
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return Optional.empty();
     }
 }

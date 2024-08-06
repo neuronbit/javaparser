@@ -20,8 +20,6 @@
  */
 package com.github.javaparser.ast.expr;
 
-import static com.github.javaparser.utils.Utils.assertNotNull;
-
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Generated;
@@ -42,8 +40,11 @@ import com.github.javaparser.metamodel.OptionalProperty;
 import com.github.javaparser.resolution.Resolvable;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static com.github.javaparser.utils.Utils.assertNotNull;
 
 /**
  * Access of a field of an object or a class.
@@ -51,11 +52,7 @@ import java.util.function.Consumer;
  *
  * @author Julio Vilmar Gesser
  */
-public class FieldAccessExpr extends Expression
-        implements NodeWithSimpleName<FieldAccessExpr>,
-                NodeWithTypeArguments<FieldAccessExpr>,
-                NodeWithScope<FieldAccessExpr>,
-                Resolvable<ResolvedValueDeclaration> {
+public class FieldAccessExpr extends Expression implements NodeWithSimpleName<FieldAccessExpr>, NodeWithTypeArguments<FieldAccessExpr>, NodeWithScope<FieldAccessExpr>, Resolvable<ResolvedValueDeclaration> {
 
     private Expression scope;
 
@@ -113,7 +110,8 @@ public class FieldAccessExpr extends Expression
             return this;
         }
         notifyPropertyChange(ObservableProperty.NAME, this.name, name);
-        if (this.name != null) this.name.setParentNode(null);
+        if (this.name != null)
+            this.name.setParentNode(null);
         this.name = name;
         setAsParentNodeOf(name);
         return this;
@@ -137,7 +135,8 @@ public class FieldAccessExpr extends Expression
             return this;
         }
         notifyPropertyChange(ObservableProperty.SCOPE, this.scope, scope);
-        if (this.scope != null) this.scope.setParentNode(null);
+        if (this.scope != null)
+            this.scope.setParentNode(null);
         this.scope = scope;
         setAsParentNodeOf(scope);
         return this;
@@ -160,7 +159,8 @@ public class FieldAccessExpr extends Expression
             return this;
         }
         notifyPropertyChange(ObservableProperty.TYPE_ARGUMENTS, this.typeArguments, typeArguments);
-        if (this.typeArguments != null) this.typeArguments.setParentNode(null);
+        if (this.typeArguments != null)
+            this.typeArguments.setParentNode(null);
         this.typeArguments = typeArguments;
         setAsParentNodeOf(typeArguments);
         return this;

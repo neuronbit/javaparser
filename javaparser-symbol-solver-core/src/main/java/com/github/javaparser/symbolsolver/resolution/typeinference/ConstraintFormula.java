@@ -97,13 +97,15 @@ public abstract class ConstraintFormula {
 
         @Override
         public String toString() {
-            return "ReductionResult{" + "boundSet=" + boundSet + ", constraintFormulas=" + constraintFormulas + '}';
+            return "ReductionResult{" +
+                    "boundSet=" + boundSet +
+                    ", constraintFormulas=" + constraintFormulas +
+                    '}';
         }
 
         public ConstraintFormula getConstraint(int index) {
             if (constraintFormulas.size() <= index) {
-                throw new IllegalArgumentException("Constraint with index " + index + " is not available as there are "
-                        + constraintFormulas.size() + " constraints");
+                throw new IllegalArgumentException("Constraint with index " + index + " is not available as there are " + constraintFormulas.size() + " constraints");
             }
             return constraintFormulas.get(index);
         }
@@ -140,4 +142,5 @@ public abstract class ConstraintFormula {
      * ii) Further constraint formulas, which are to be reduced recursively.
      */
     public abstract ReductionResult reduce(BoundSet currentBoundSet);
+
 }

@@ -24,6 +24,10 @@ import static com.github.javaparser.utils.Utils.assertNotNull;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.expr.AnnotationExpr;
@@ -39,25 +43,11 @@ import com.github.javaparser.ast.visitor.CloneVisitor;
 import com.github.javaparser.metamodel.CallableDeclarationMetaModel;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
 import com.github.javaparser.metamodel.OptionalProperty;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
  * Represents a declaration which is callable eg. a method or a constructor.
  */
-public abstract class CallableDeclaration<T extends CallableDeclaration<?>> extends BodyDeclaration<T>
-        implements NodeWithAccessModifiers<T>,
-                NodeWithDeclaration,
-                NodeWithSimpleName<T>,
-                NodeWithParameters<T>,
-                NodeWithThrownExceptions<T>,
-                NodeWithTypeParameters<T>,
-                NodeWithJavadoc<T>,
-                NodeWithAbstractModifier<T>,
-                NodeWithStaticModifier<T>,
-                NodeWithFinalModifier<T>,
-                NodeWithStrictfpModifier<T> {
+public abstract class CallableDeclaration<T extends CallableDeclaration<?>> extends BodyDeclaration<T> implements NodeWithAccessModifiers<T>, NodeWithDeclaration, NodeWithSimpleName<T>, NodeWithParameters<T>, NodeWithThrownExceptions<T>, NodeWithTypeParameters<T>, NodeWithJavadoc<T>, NodeWithAbstractModifier<T>, NodeWithStaticModifier<T>, NodeWithFinalModifier<T>, NodeWithStrictfpModifier<T> {
 
     private NodeList<Modifier> modifiers;
 
@@ -73,14 +63,7 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
     private ReceiverParameter receiverParameter;
 
     @AllFieldsConstructor
-    CallableDeclaration(
-            NodeList<Modifier> modifiers,
-            NodeList<AnnotationExpr> annotations,
-            NodeList<TypeParameter> typeParameters,
-            SimpleName name,
-            NodeList<Parameter> parameters,
-            NodeList<ReferenceType> thrownExceptions,
-            ReceiverParameter receiverParameter) {
+    CallableDeclaration(NodeList<Modifier> modifiers, NodeList<AnnotationExpr> annotations, NodeList<TypeParameter> typeParameters, SimpleName name, NodeList<Parameter> parameters, NodeList<ReferenceType> thrownExceptions, ReceiverParameter receiverParameter) {
         this(null, modifiers, annotations, typeParameters, name, parameters, thrownExceptions, receiverParameter);
     }
 
@@ -88,15 +71,7 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
      * This constructor is used by the parser and is considered private.
      */
     @Generated("com.github.javaparser.generator.core.node.MainConstructorGenerator")
-    public CallableDeclaration(
-            TokenRange tokenRange,
-            NodeList<Modifier> modifiers,
-            NodeList<AnnotationExpr> annotations,
-            NodeList<TypeParameter> typeParameters,
-            SimpleName name,
-            NodeList<Parameter> parameters,
-            NodeList<ReferenceType> thrownExceptions,
-            ReceiverParameter receiverParameter) {
+    public CallableDeclaration(TokenRange tokenRange, NodeList<Modifier> modifiers, NodeList<AnnotationExpr> annotations, NodeList<TypeParameter> typeParameters, SimpleName name, NodeList<Parameter> parameters, NodeList<ReferenceType> thrownExceptions, ReceiverParameter receiverParameter) {
         super(tokenRange, annotations);
         setModifiers(modifiers);
         setTypeParameters(typeParameters);
@@ -113,12 +88,14 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
      * @return modifiers
      * @see Modifier
      */
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    @Override
+	@Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     public NodeList<Modifier> getModifiers() {
         return modifiers;
     }
 
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    @Override
+	@Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     @SuppressWarnings("unchecked")
     public T setModifiers(final NodeList<Modifier> modifiers) {
         assertNotNull(modifiers);
@@ -126,18 +103,21 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
             return (T) this;
         }
         notifyPropertyChange(ObservableProperty.MODIFIERS, this.modifiers, modifiers);
-        if (this.modifiers != null) this.modifiers.setParentNode(null);
+        if (this.modifiers != null)
+            this.modifiers.setParentNode(null);
         this.modifiers = modifiers;
         setAsParentNodeOf(modifiers);
         return (T) this;
     }
 
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    @Override
+	@Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     public SimpleName getName() {
         return name;
     }
 
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    @Override
+	@Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     @SuppressWarnings("unchecked")
     public T setName(final SimpleName name) {
         assertNotNull(name);
@@ -145,18 +125,21 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
             return (T) this;
         }
         notifyPropertyChange(ObservableProperty.NAME, this.name, name);
-        if (this.name != null) this.name.setParentNode(null);
+        if (this.name != null)
+            this.name.setParentNode(null);
         this.name = name;
         setAsParentNodeOf(name);
         return (T) this;
     }
 
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    @Override
+	@Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     public NodeList<Parameter> getParameters() {
         return parameters;
     }
 
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    @Override
+	@Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     @SuppressWarnings("unchecked")
     public T setParameters(final NodeList<Parameter> parameters) {
         assertNotNull(parameters);
@@ -164,18 +147,21 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
             return (T) this;
         }
         notifyPropertyChange(ObservableProperty.PARAMETERS, this.parameters, parameters);
-        if (this.parameters != null) this.parameters.setParentNode(null);
+        if (this.parameters != null)
+            this.parameters.setParentNode(null);
         this.parameters = parameters;
         setAsParentNodeOf(parameters);
         return (T) this;
     }
 
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    @Override
+	@Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     public NodeList<ReferenceType> getThrownExceptions() {
         return thrownExceptions;
     }
 
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    @Override
+	@Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     @SuppressWarnings("unchecked")
     public T setThrownExceptions(final NodeList<ReferenceType> thrownExceptions) {
         assertNotNull(thrownExceptions);
@@ -183,18 +169,21 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
             return (T) this;
         }
         notifyPropertyChange(ObservableProperty.THROWN_EXCEPTIONS, this.thrownExceptions, thrownExceptions);
-        if (this.thrownExceptions != null) this.thrownExceptions.setParentNode(null);
+        if (this.thrownExceptions != null)
+            this.thrownExceptions.setParentNode(null);
         this.thrownExceptions = thrownExceptions;
         setAsParentNodeOf(thrownExceptions);
         return (T) this;
     }
 
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    @Override
+	@Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     public NodeList<TypeParameter> getTypeParameters() {
         return typeParameters;
     }
 
-    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    @Override
+	@Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
     @SuppressWarnings("unchecked")
     public T setTypeParameters(final NodeList<TypeParameter> typeParameters) {
         assertNotNull(typeParameters);
@@ -202,7 +191,8 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
             return (T) this;
         }
         notifyPropertyChange(ObservableProperty.TYPE_PARAMETERS, this.typeParameters, typeParameters);
-        if (this.typeParameters != null) this.typeParameters.setParentNode(null);
+        if (this.typeParameters != null)
+            this.typeParameters.setParentNode(null);
         this.typeParameters = typeParameters;
         setAsParentNodeOf(typeParameters);
         return (T) this;
@@ -290,11 +280,15 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Signature signature = (Signature) o;
-            if (!name.equals(signature.name)) return false;
-            if (!parameterTypes.equals(signature.parameterTypes)) return false;
+            if (!name.equals(signature.name))
+                return false;
+            if (!parameterTypes.equals(signature.parameterTypes))
+                return false;
             return true;
         }
 
@@ -316,13 +310,7 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
     }
 
     public Signature getSignature() {
-        return new Signature(
-                getName().getIdentifier(),
-                getParameters().stream()
-                        .map(this::getTypeWithVarargsAsArray)
-                        .map(this::stripGenerics)
-                        .map(this::stripAnnotations)
-                        .collect(toList()));
+        return new Signature(getName().getIdentifier(), getParameters().stream().map(this::getTypeWithVarargsAsArray).map(this::stripGenerics).map(this::stripAnnotations).collect(toList()));
     }
 
     private Type stripAnnotations(Type type) {
@@ -341,8 +329,8 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
 
     private Type getTypeWithVarargsAsArray(Parameter p) {
         /* A signature includes the varargs ellipsis.
-        This is a field on parameter which we lose when we only get the type,
-        so we represent it as an additional [] on the type. */
+         This is a field on parameter which we lose when we only get the type,
+         so we represent it as an additional [] on the type. */
         Type t = p.getType().clone();
         if (p.isVarArgs()) {
             t = new ArrayType(t);
@@ -435,7 +423,8 @@ public abstract class CallableDeclaration<T extends CallableDeclaration<?>> exte
             return (T) this;
         }
         notifyPropertyChange(ObservableProperty.RECEIVER_PARAMETER, this.receiverParameter, receiverParameter);
-        if (this.receiverParameter != null) this.receiverParameter.setParentNode(null);
+        if (this.receiverParameter != null)
+            this.receiverParameter.setParentNode(null);
         this.receiverParameter = receiverParameter;
         setAsParentNodeOf(receiverParameter);
         return (T) this;

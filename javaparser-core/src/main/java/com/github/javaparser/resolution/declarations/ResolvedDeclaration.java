@@ -131,4 +131,21 @@ public interface ResolvedDeclaration extends AssociableToAST {
     default ResolvedTypePatternDeclaration asTypePattern() {
         throw new UnsupportedOperationException(String.format("%s is not a Pattern", this));
     }
+
+    //TODO spearwang 2024/5/24: change signature and move to xxx
+    static boolean isMatch(String test, String target) {
+        if (test.equals(target)) {
+            return true;
+        }
+        if (test.contains(".") && target.contains(".")) {
+            return false;
+        }
+        if (test.contains(".")) {
+            test = test.substring(test.lastIndexOf('.') + 1);
+        }
+        if (target.contains(".")) {
+            target = target.substring(target.lastIndexOf('.') + 1);
+        }
+        return target.equals(test);
+    }
 }

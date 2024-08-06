@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2015-2016 Federico Tomassetti
  * Copyright (C) 2017-2024 The JavaParser Team.
@@ -21,15 +22,15 @@
 
 package com.github.javaparser.printer.lexicalpreservation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-class Issue1793Test extends AbstractLexicalPreservingTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+class Issue1793Test extends AbstractLexicalPreservingTest {
+    
     @AfterEach
     public void reset() {
         StaticJavaParser.setConfiguration(new ParserConfiguration());
@@ -37,13 +38,16 @@ class Issue1793Test extends AbstractLexicalPreservingTest {
 
     @Test
     void importIsAddedOnTheSameLine() {
-        considerCode("public class Test {\n" + "  public void foo(Bar x, Bar y) {\n"
-                + "    x.barf(); // expected to be wrapped\n"
-                + "    x.bark(); // expected to be wrapped\n"
-                + "    y.barf(); // expected to be wrapped\n"
-                + "    y.bark(); // expected to be wrapped\n"
-                + "  }\n"
-                + "}");
+        considerCode( 
+                "public class Test {\n" + 
+                "  public void foo(Bar x, Bar y) {\n" + 
+                "    x.barf(); // expected to be wrapped\n" + 
+                "    x.bark(); // expected to be wrapped\n" + 
+                "    y.barf(); // expected to be wrapped\n" + 
+                "    y.bark(); // expected to be wrapped\n" + 
+                "  }\n" + 
+                "}");
         assertEquals(LexicalPreservingPrinter.print(cu), LexicalPreservingPrinter.print(cu.clone()));
     }
+
 }

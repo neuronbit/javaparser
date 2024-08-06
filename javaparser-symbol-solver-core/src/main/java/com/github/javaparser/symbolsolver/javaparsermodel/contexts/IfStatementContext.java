@@ -27,15 +27,17 @@ import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class IfStatementContext extends StatementContext<IfStmt> {
-    // public class IfStatementContext extends AbstractJavaParserContext<IfStmt> {
+//public class IfStatementContext extends AbstractJavaParserContext<IfStmt> {
 
     public IfStatementContext(IfStmt wrappedNode, TypeSolver typeSolver) {
         super(wrappedNode, typeSolver);
     }
+
 
     @Override
     public List<TypePatternExpr> typePatternExprsExposedToChild(Node child) {
@@ -45,19 +47,20 @@ public class IfStatementContext extends StatementContext<IfStmt> {
         List<TypePatternExpr> results = new ArrayList<>();
 
         boolean givenNodeIsWithinThenStatement = wrappedNode.getThenStmt().containsWithinRange(child);
-        if (givenNodeIsWithinThenStatement) {
+        if(givenNodeIsWithinThenStatement) {
             results.addAll(conditionContext.typePatternExprsExposedFromChildren());
         }
 
         wrappedNode.getElseStmt().ifPresent(elseStatement -> {
             boolean givenNodeIsWithinElseStatement = elseStatement.containsWithinRange(child);
-            if (givenNodeIsWithinElseStatement) {
+            if(givenNodeIsWithinElseStatement) {
                 results.addAll(conditionContext.negatedTypePatternExprsExposedFromChildren());
             }
         });
 
         return results;
     }
+
 
     /**
      * <pre>{@code
@@ -151,6 +154,7 @@ public class IfStatementContext extends StatementContext<IfStmt> {
 
         return false;
     }
+
 
     public boolean nodeContextIsConditionOfIfStmt(Context parentContext) {
         if (!(parentContext instanceof AbstractJavaParserContext)) {

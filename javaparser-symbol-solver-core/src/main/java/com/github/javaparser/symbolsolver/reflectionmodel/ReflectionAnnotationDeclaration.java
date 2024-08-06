@@ -21,6 +21,7 @@
 
 package com.github.javaparser.symbolsolver.reflectionmodel;
 
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.TypeSolver;
@@ -33,6 +34,7 @@ import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.core.resolution.MethodUsageResolutionCapability;
 import com.github.javaparser.symbolsolver.logic.AbstractTypeDeclaration;
+
 import java.lang.annotation.Inherited;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,8 +43,9 @@ import java.util.stream.Stream;
 /**
  * @author Malte Skoruppa
  */
-public class ReflectionAnnotationDeclaration extends AbstractTypeDeclaration
-        implements ResolvedAnnotationDeclaration, MethodUsageResolutionCapability, MethodResolutionCapability {
+public class ReflectionAnnotationDeclaration extends AbstractTypeDeclaration implements ResolvedAnnotationDeclaration,
+                                                                                        MethodUsageResolutionCapability,
+                                                                                        MethodResolutionCapability {
 
     ///
     /// Fields
@@ -94,7 +97,9 @@ public class ReflectionAnnotationDeclaration extends AbstractTypeDeclaration
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" + "clazz=" + clazz.getCanonicalName() + '}';
+        return getClass().getSimpleName() + "{" +
+               "clazz=" + clazz.getCanonicalName() +
+               '}';
     }
 
     @Override
@@ -154,8 +159,7 @@ public class ReflectionAnnotationDeclaration extends AbstractTypeDeclaration
     @Override
     public Optional<ResolvedReferenceTypeDeclaration> containerType() {
         // TODO #1841
-        throw new UnsupportedOperationException(
-                "containerType() is not supported for " + this.getClass().getCanonicalName());
+        throw new UnsupportedOperationException("containerType() is not supported for " + this.getClass().getCanonicalName());
     }
 
     /**
@@ -172,8 +176,8 @@ public class ReflectionAnnotationDeclaration extends AbstractTypeDeclaration
     @Override
     public Set<ResolvedReferenceTypeDeclaration> internalTypes() {
         return Arrays.stream(this.clazz.getDeclaredClasses())
-                .map(ic -> ReflectionFactory.typeDeclarationFor(ic, typeSolver))
-                .collect(Collectors.toSet());
+            .map(ic -> ReflectionFactory.typeDeclarationFor(ic, typeSolver))
+            .collect(Collectors.toSet());
     }
 
     @Override
@@ -184,18 +188,17 @@ public class ReflectionAnnotationDeclaration extends AbstractTypeDeclaration
     @Override
     public List<ResolvedAnnotationMemberDeclaration> getAnnotationMembers() {
         return Stream.of(clazz.getDeclaredMethods())
-                .map(m -> new ReflectionAnnotationMemberDeclaration(m, typeSolver))
-                .collect(Collectors.toList());
+                       .map(m -> new ReflectionAnnotationMemberDeclaration(m, typeSolver))
+                       .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<MethodUsage> solveMethodAsUsage(
-            final String name,
-            final List<ResolvedType> parameterTypes,
-            final Context invokationContext,
-            final List<ResolvedType> typeParameterValues) {
-        Optional<MethodUsage> res = ReflectionMethodResolutionLogic.solveMethodAsUsage(
-                name, parameterTypes, typeSolver, invokationContext, typeParameterValues, this, clazz);
+    public Optional<MethodUsage> solveMethodAsUsage(final String name,
+                                                    final List<ResolvedType> parameterTypes,
+                                                    final Context invokationContext,
+                                                    final List<ResolvedType> typeParameterValues) {
+        Optional<MethodUsage> res = ReflectionMethodResolutionLogic.solveMethodAsUsage(name, parameterTypes, typeSolver, invokationContext,
+            typeParameterValues, this, clazz);
         if (res.isPresent()) {
             // We have to replace method type typeParametersValues here
             InferenceContext inferenceContext = new InferenceContext(typeSolver);
@@ -211,7 +214,7 @@ public class ReflectionAnnotationDeclaration extends AbstractTypeDeclaration
             }
             try {
                 ResolvedType returnType = inferenceContext.addSingle(methodUsage.returnType());
-                for (int j = 0; j < parameters.size(); j++) {
+                for (int j=0;j<parameters.size();j++) {
                     methodUsage = methodUsage.replaceParamType(j, inferenceContext.resolve(parameters.get(j)));
                 }
                 methodUsage = methodUsage.replaceReturnType(inferenceContext.resolve(returnType));
@@ -225,13 +228,46 @@ public class ReflectionAnnotationDeclaration extends AbstractTypeDeclaration
     }
 
     @Override
-    public SymbolReference<ResolvedMethodDeclaration> solveMethod(
-            final String name, final List<ResolvedType> argumentsTypes, final boolean staticOnly) {
-        return ReflectionMethodResolutionLogic.solveMethod(name, argumentsTypes, staticOnly, typeSolver, this, clazz);
+    public SymbolReference<ResolvedMethodDeclaration> solveMethod(final String name,
+                                                                  final List<ResolvedType> argumentsTypes,
+                                                                  final boolean staticOnly) {
+        return ReflectionMethodResolutionLogic.solveMethod(name, argumentsTypes, staticOnly,
+            typeSolver,this, clazz);
     }
 
     @Override
     public boolean isInheritable() {
         return clazz.getAnnotation(Inherited.class) != null;
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<ResolvedAnnotationExpr> getAnnotations() {
+        return Arrays.stream(clazz.getAnnotations()).map(ReflectionResolvedAnnotationExpr::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        if (typeName.contains(".")) {
+            String simpleName = typeName.substring(typeName.lastIndexOf('.') + 1);
+            return Optional.of(Arrays.stream(this.clazz.getAnnotations())
+                    .filter(a -> a.annotationType().getName().equals(simpleName) || a.annotationType().getCanonicalName().equals(typeName))
+                    .map(ReflectionResolvedAnnotationExpr::new)
+                    .collect(Collectors.toList()));
+        } else {
+            return Optional.of(Arrays.stream(this.clazz.getAnnotations())
+                    .filter(a -> a.annotationType().getName().equals(typeName))
+                    .map(ReflectionResolvedAnnotationExpr::new)
+                    .collect(Collectors.toList()));
+        }
+    }
+
+    @Override
+    public boolean setJavadoc(Javadoc javadoc) {
+        return false;
     }
 }

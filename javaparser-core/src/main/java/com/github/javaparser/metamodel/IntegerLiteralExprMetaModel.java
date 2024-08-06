@@ -22,6 +22,7 @@ package com.github.javaparser.metamodel;
 
 import com.github.javaparser.ast.Generated;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
+
 import java.util.Optional;
 
 /**
@@ -38,12 +39,6 @@ public class IntegerLiteralExprMetaModel extends LiteralStringValueExprMetaModel
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
     IntegerLiteralExprMetaModel(Optional<BaseNodeMetaModel> superBaseNodeMetaModel) {
-        super(
-                superBaseNodeMetaModel,
-                IntegerLiteralExpr.class,
-                "IntegerLiteralExpr",
-                "com.github.javaparser.ast.expr",
-                false,
-                false);
+        super(superBaseNodeMetaModel, IntegerLiteralExpr.class, "IntegerLiteralExpr", "com.github.javaparser.ast.expr", false, false);
     }
 }

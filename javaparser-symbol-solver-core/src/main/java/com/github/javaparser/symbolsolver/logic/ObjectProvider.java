@@ -28,6 +28,5 @@ import com.github.javaparser.resolution.types.ResolvedReferenceType;
  */
 public interface ObjectProvider {
     ResolvedReferenceType object();
-
     ResolvedReferenceType byName(String qname);
 }

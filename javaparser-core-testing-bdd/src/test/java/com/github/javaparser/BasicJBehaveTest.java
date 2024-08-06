@@ -21,9 +21,7 @@
 
 package com.github.javaparser;
 
-import static org.jbehave.core.io.CodeLocations.codeLocationFromClass;
 
-import java.util.List;
 import org.jbehave.core.configuration.Configuration;
 import org.jbehave.core.configuration.MostUsefulConfiguration;
 import org.jbehave.core.failures.FailingUponPendingStep;
@@ -33,6 +31,10 @@ import org.jbehave.core.junit.JUnit4StoryRunner;
 import org.jbehave.core.junit.JUnitStories;
 import org.jbehave.core.reporters.Format;
 import org.jbehave.core.reporters.StoryReporterBuilder;
+
+import java.util.List;
+
+import static org.jbehave.core.io.CodeLocations.codeLocationFromClass;
 
 abstract class BasicJBehaveTest extends JUnitStories {
 
@@ -51,12 +53,13 @@ abstract class BasicJBehaveTest extends JUnitStories {
                 // Fails if Steps are not implemented
                 .usePendingStepStrategy(new FailingUponPendingStep())
                 // CONSOLE and HTML reporting
-                .useStoryReporterBuilder(
-                        new StoryReporterBuilder().withDefaultFormats().withFormats(Format.CONSOLE, Format.HTML));
+                .useStoryReporterBuilder(new StoryReporterBuilder().withDefaultFormats()
+                        .withFormats(Format.CONSOLE, Format.HTML));
     }
 
     @Override
     public final List<String> storyPaths() {
         return new StoryFinder().findPaths(codeLocationFromClass(this.getClass()), storiesPath, "");
     }
+
 }

@@ -21,8 +21,6 @@
 
 package com.github.javaparser.symbolsolver.resolution.javaparser.contexts;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -35,17 +33,20 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  *
  */
 class BlockStmtContextResolutionTest extends AbstractResolutionTest {
 
     @BeforeEach
-    void setup() {}
+    void setup() {
+    }
 
     // issue #3526
     @Test
-    void must_be_resolved_from_previous_declaration() {
+    void must_be_resolved_from_previous_declaration(){
         String src = "public class Example {\n"
                 + "    int a = 3;\n"
                 + "    public void bla() {\n"
@@ -62,9 +63,9 @@ class BlockStmtContextResolutionTest extends AbstractResolutionTest {
         ResolvedType rt = expr.calculateResolvedType();
         assertEquals("int", rt.describe());
     }
-
+    
     @Test
-    void must_be_resolved_from_previous_declaration_second_declaration_of_the_same_field_name() {
+    void must_be_resolved_from_previous_declaration_second_declaration_of_the_same_field_name(){
         String src = "public class Example {\n"
                 + "    int a = 3;\n"
                 + "    public void bla() {\n"
@@ -81,4 +82,5 @@ class BlockStmtContextResolutionTest extends AbstractResolutionTest {
         ResolvedType rt2 = expr.calculateResolvedType();
         assertEquals("java.lang.String", rt2.describe());
     }
+
 }

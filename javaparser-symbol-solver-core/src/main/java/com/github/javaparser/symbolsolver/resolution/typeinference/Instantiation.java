@@ -21,6 +21,7 @@
 
 package com.github.javaparser.symbolsolver.resolution.typeinference;
 
+
 import com.github.javaparser.resolution.types.ResolvedType;
 
 /**
@@ -63,6 +64,9 @@ public class Instantiation {
 
     @Override
     public String toString() {
-        return "Instantiation{" + "inferenceVariable=" + inferenceVariable + ", properType=" + properType + '}';
+        return "Instantiation{" +
+                "inferenceVariable=" + inferenceVariable +
+                ", properType=" + properType +
+                '}';
     }
 }

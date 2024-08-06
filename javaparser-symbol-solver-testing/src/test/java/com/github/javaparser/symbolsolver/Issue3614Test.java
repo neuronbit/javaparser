@@ -20,8 +20,6 @@
 
 package com.github.javaparser.symbolsolver;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -30,6 +28,8 @@ import com.github.javaparser.symbolsolver.resolution.AbstractResolutionTest;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Issue3614Test extends AbstractResolutionTest {
 
@@ -48,8 +48,7 @@ public class Issue3614Test extends AbstractResolutionTest {
 
         CompilationUnit cu = StaticJavaParser.parse(code);
 
-        VariableDeclarationExpr vde =
-                cu.findFirst(VariableDeclarationExpr.class).get();
+        VariableDeclarationExpr vde = cu.findFirst(VariableDeclarationExpr.class).get();
         String resolvedType = vde.calculateResolvedType().describe();
         assertEquals("java.util.ArrayList", resolvedType);
     }

@@ -20,10 +20,11 @@
  */
 package com.github.javaparser.resolution.declarations;
 
-import com.github.javaparser.resolution.types.ResolvedReferenceType;
-import com.github.javaparser.resolution.types.ResolvedType;
 import java.util.List;
 import java.util.Optional;
+
+import com.github.javaparser.resolution.types.ResolvedReferenceType;
+import com.github.javaparser.resolution.types.ResolvedType;
 
 /**
  * Declaration of a type parameter.
@@ -98,6 +99,7 @@ public interface ResolvedTypeParameterDeclaration extends ResolvedTypeDeclaratio
             public ResolvedReferenceType object() {
                 throw new UnsupportedOperationException();
             }
+
         };
     }
 
@@ -105,7 +107,7 @@ public interface ResolvedTypeParameterDeclaration extends ResolvedTypeDeclaratio
      * Name of the type parameter.
      */
     @Override
-    String getName();
+	String getName();
 
     /**
      * Is the type parameter been defined on a type?
@@ -133,7 +135,7 @@ public interface ResolvedTypeParameterDeclaration extends ResolvedTypeDeclaratio
      * This is unsupported because there is no package for a Type Parameter, only for its container.
      */
     @Override
-    default String getPackageName() {
+	default String getPackageName() {
         throw new UnsupportedOperationException();
     }
 
@@ -142,7 +144,7 @@ public interface ResolvedTypeParameterDeclaration extends ResolvedTypeDeclaratio
      * This is unsupported because there is no class for a Type Parameter, only for its container.
      */
     @Override
-    default String getClassName() {
+	default String getClassName() {
         throw new UnsupportedOperationException();
     }
 
@@ -152,7 +154,7 @@ public interface ResolvedTypeParameterDeclaration extends ResolvedTypeDeclaratio
      * The qualified name of a method is its qualified signature.
      */
     @Override
-    default String getQualifiedName() {
+	default String getQualifiedName() {
         return String.format("%s.%s", getContainerId(), getName());
     }
 
@@ -328,10 +330,13 @@ public interface ResolvedTypeParameterDeclaration extends ResolvedTypeDeclaratio
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Bound bound = (Bound) o;
-            if (extendsBound != bound.extendsBound) return false;
+            if (extendsBound != bound.extendsBound)
+                return false;
             return type != null ? type.equals(bound.type) : bound.type == null;
         }
 

@@ -20,8 +20,6 @@
  */
 package com.github.javaparser.ast.expr;
 
-import static com.github.javaparser.utils.Utils.assertNotNull;
-
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Generated;
@@ -44,8 +42,11 @@ import com.github.javaparser.resolution.Resolvable;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static com.github.javaparser.utils.Utils.assertNotNull;
 
 /**
  * A method call on an object or a class. <br>{@code circle.circumference()} <br>In {@code a.<String>bb(15);}, a
@@ -53,12 +54,7 @@ import java.util.function.Consumer;
  *
  * @author Julio Vilmar Gesser
  */
-public class MethodCallExpr extends Expression
-        implements NodeWithTypeArguments<MethodCallExpr>,
-                NodeWithArguments<MethodCallExpr>,
-                NodeWithSimpleName<MethodCallExpr>,
-                NodeWithOptionalScope<MethodCallExpr>,
-                Resolvable<ResolvedMethodDeclaration> {
+public class MethodCallExpr extends Expression implements NodeWithTypeArguments<MethodCallExpr>, NodeWithArguments<MethodCallExpr>, NodeWithSimpleName<MethodCallExpr>, NodeWithOptionalScope<MethodCallExpr>, Resolvable<ResolvedMethodDeclaration> {
 
     @OptionalProperty
     private Expression scope;
@@ -90,11 +86,7 @@ public class MethodCallExpr extends Expression
         this(null, scope, null, new SimpleName(name), arguments);
     }
 
-    public MethodCallExpr(
-            final Expression scope,
-            final NodeList<Type> typeArguments,
-            final String name,
-            final NodeList<Expression> arguments) {
+    public MethodCallExpr(final Expression scope, final NodeList<Type> typeArguments, final String name, final NodeList<Expression> arguments) {
         this(null, scope, typeArguments, new SimpleName(name), arguments);
     }
 
@@ -103,11 +95,7 @@ public class MethodCallExpr extends Expression
     }
 
     @AllFieldsConstructor
-    public MethodCallExpr(
-            final Expression scope,
-            final NodeList<Type> typeArguments,
-            final SimpleName name,
-            final NodeList<Expression> arguments) {
+    public MethodCallExpr(final Expression scope, final NodeList<Type> typeArguments, final SimpleName name, final NodeList<Expression> arguments) {
         this(null, scope, typeArguments, name, arguments);
     }
 
@@ -115,12 +103,7 @@ public class MethodCallExpr extends Expression
      * This constructor is used by the parser and is considered private.
      */
     @Generated("com.github.javaparser.generator.core.node.MainConstructorGenerator")
-    public MethodCallExpr(
-            TokenRange tokenRange,
-            Expression scope,
-            NodeList<Type> typeArguments,
-            SimpleName name,
-            NodeList<Expression> arguments) {
+    public MethodCallExpr(TokenRange tokenRange, Expression scope, NodeList<Type> typeArguments, SimpleName name, NodeList<Expression> arguments) {
         super(tokenRange);
         setScope(scope);
         setTypeArguments(typeArguments);
@@ -163,7 +146,8 @@ public class MethodCallExpr extends Expression
             return this;
         }
         notifyPropertyChange(ObservableProperty.ARGUMENTS, this.arguments, arguments);
-        if (this.arguments != null) this.arguments.setParentNode(null);
+        if (this.arguments != null)
+            this.arguments.setParentNode(null);
         this.arguments = arguments;
         setAsParentNodeOf(arguments);
         return this;
@@ -176,7 +160,8 @@ public class MethodCallExpr extends Expression
             return this;
         }
         notifyPropertyChange(ObservableProperty.NAME, this.name, name);
-        if (this.name != null) this.name.setParentNode(null);
+        if (this.name != null)
+            this.name.setParentNode(null);
         this.name = name;
         setAsParentNodeOf(name);
         return this;
@@ -188,7 +173,8 @@ public class MethodCallExpr extends Expression
             return this;
         }
         notifyPropertyChange(ObservableProperty.SCOPE, this.scope, scope);
-        if (this.scope != null) this.scope.setParentNode(null);
+        if (this.scope != null)
+            this.scope.setParentNode(null);
         this.scope = scope;
         setAsParentNodeOf(scope);
         return this;
@@ -211,7 +197,8 @@ public class MethodCallExpr extends Expression
             return this;
         }
         notifyPropertyChange(ObservableProperty.TYPE_ARGUMENTS, this.typeArguments, typeArguments);
-        if (this.typeArguments != null) this.typeArguments.setParentNode(null);
+        if (this.typeArguments != null)
+            this.typeArguments.setParentNode(null);
         this.typeArguments = typeArguments;
         setAsParentNodeOf(typeArguments);
         return this;
@@ -350,7 +337,7 @@ public class MethodCallExpr extends Expression
     @Override
     public boolean isPolyExpression() {
         // A method invocation expression is a poly expression if all of the following are true:
-        //
+        // 
         // 1. The invocation appears in an assignment context or an invocation context (§5.2, §5.3).
         if (!(appearsInAssignmentContext() || appearsInInvocationContext())) {
             return false;
@@ -363,8 +350,7 @@ public class MethodCallExpr extends Expression
         // 3. The method to be invoked, as determined by the following subsections, is generic (§8.4.4) and has a
         // return type that mentions at least one of the method's type parameters.
         // A method is generic if it declares one or more type variables (§4.4).
-        if (isGenericMethod()
-                && hasParameterwithSameTypeThanResultType(resolve().getReturnType())) {
+        if (isGenericMethod() && hasParameterwithSameTypeThanResultType(resolve().getReturnType())) {
             // it's a poly expression
             return true;
         }
@@ -384,9 +370,7 @@ public class MethodCallExpr extends Expression
      *  return true if at least one of the method's type parameters has the same type as the specified type .
      */
     private boolean hasParameterwithSameTypeThanResultType(ResolvedType resolvedReturnType) {
-        return getTypeArguments().isPresent()
-                && getTypeArguments().get().stream()
-                        .anyMatch(argType -> argType.resolve().isAssignableBy(resolvedReturnType));
+        return getTypeArguments().isPresent() && getTypeArguments().get().stream().anyMatch(argType -> argType.resolve().isAssignableBy(resolvedReturnType));
     }
 
     /*

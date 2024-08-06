@@ -25,4 +25,5 @@ public interface ResolvedConstructorDeclarationTest extends ResolvedMethodLikeDe
 
     @Override
     ResolvedConstructorDeclaration createValue();
+
 }

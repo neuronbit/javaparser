@@ -21,19 +21,29 @@
 
 package com.github.javaparser.symbolsolver.javaparsermodel.declarations;
 
-import static com.github.javaparser.resolution.Navigator.demandParentNode;
-
 import com.github.javaparser.ast.AccessSpecifier;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.TypeSolver;
+import com.github.javaparser.resolution.declarations.ResolvedAnnotationExpr;
+import com.github.javaparser.resolution.declarations.ResolvedDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedFieldDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import static com.github.javaparser.resolution.Navigator.demandParentNode;
+
 
 /**
  * @author Federico Tomassetti
@@ -51,8 +61,7 @@ public class JavaParserFieldDeclaration implements ResolvedFieldDeclaration {
         this.variableDeclarator = variableDeclarator;
         this.typeSolver = typeSolver;
         if (!(demandParentNode(variableDeclarator) instanceof com.github.javaparser.ast.body.FieldDeclaration)) {
-            throw new IllegalStateException(
-                    demandParentNode(variableDeclarator).getClass().getCanonicalName());
+            throw new IllegalStateException(demandParentNode(variableDeclarator).getClass().getCanonicalName());
         }
         this.wrappedNode = (com.github.javaparser.ast.body.FieldDeclaration) demandParentNode(variableDeclarator);
     }
@@ -113,9 +122,57 @@ public class JavaParserFieldDeclaration implements ResolvedFieldDeclaration {
         }
         throw new IllegalStateException();
     }
-
+    
     @Override
     public Optional<Node> toAst() {
         return Optional.ofNullable(wrappedNode);
+    }
+
+    @Override
+    public boolean isTransient() {
+        return wrappedNode.hasModifier(Modifier.Keyword.TRANSIENT);
+    }
+
+    @Override
+    public boolean isEnumConstant() {
+        return wrappedNode.isEnumConstantDeclaration();
+    }
+
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        final NodeList<AnnotationExpr> annotations = wrappedNode.getAnnotations();
+        final List<ResolvedAnnotationExpr> result = new ArrayList<>(annotations.size());
+        for (AnnotationExpr annotation : annotations) {
+            if (ResolvedDeclaration.isMatch(typeName, annotation.getName().getIdentifier())) {
+                result.add(new JavaParserResolvedAnnotationExpr(annotation, typeSolver));
+            }
+        }
+        return Optional.of(result);
+    }
+
+    @Override
+    public Object getInitialValue() {
+        final Optional<Expression> initializer = variableDeclarator.getInitializer();
+        if (!initializer.isPresent()) {
+            return null;
+        }
+
+        return initializer.get();
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return wrappedNode.getJavadoc();
+    }
+
+    @Override
+    public List<ResolvedAnnotationExpr> getAnnotations() {
+        final NodeList<AnnotationExpr> annotations = wrappedNode.getAnnotations();
+        final List<ResolvedAnnotationExpr> result = new ArrayList<>(annotations.size());
+        for (AnnotationExpr annotation : annotations) {
+            result.add(new JavaParserResolvedAnnotationExpr(annotation, typeSolver));
+        }
+        return result;
     }
 }

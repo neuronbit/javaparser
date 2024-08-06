@@ -20,10 +20,11 @@
  */
 package com.github.javaparser;
 
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.observer.Observable;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.observer.Observable;
 
 /**
  * An object that can have a parent node.
@@ -87,7 +88,8 @@ public interface HasParentNode<T> extends Observable {
      * @param <N>
      */
     default <N> Optional<N> findAncestor(Predicate<N> predicate, Class<N>... types) {
-        if (!hasParentNode()) return Optional.empty();
+        if (!hasParentNode())
+            return Optional.empty();
         Node parent = getParentNode().get();
         for (Class<N> type : types) {
             if (type.isAssignableFrom(parent.getClass()) && predicate.test(type.cast(parent))) {

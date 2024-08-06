@@ -28,7 +28,9 @@ import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
 import java.util.concurrent.TimeUnit;
 
-@interface NestedAnnotation {}
+@interface NestedAnnotation {
+
+}
 
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.SOURCE)

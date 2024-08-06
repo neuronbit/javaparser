@@ -21,8 +21,6 @@
 
 package com.github.javaparser.symbolsolver.resolution;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
@@ -37,21 +35,25 @@ import com.github.javaparser.symbolsolver.AbstractSymbolResolutionTest;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LambdaGenericResolutionTest extends AbstractSymbolResolutionTest {
 
     @Test
     void genericLambdas() {
-        Path testFile = adaptPath("src/test/resources/GenericLambdas.java.txt");
+        Path testFile= adaptPath("src/test/resources/GenericLambdas.java.txt");
         CombinedTypeSolver typeSolver = new CombinedTypeSolver();
         typeSolver.add(new ReflectionTypeSolver());
-        JavaParser parser =
-                new JavaParser(new ParserConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver)));
+        JavaParser parser = new JavaParser(
+                new ParserConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver))
+        );
         CompilationUnit cu = null;
         try {
             cu = parser.parse(testFile).getResult().get();
@@ -63,10 +65,12 @@ public class LambdaGenericResolutionTest extends AbstractSymbolResolutionTest {
         MethodDeclaration method = Navigator.demandMethod(clazz, "foo");
         MethodCallExpr sinkCall = Navigator.demandNodeOfGivenClass(method, MethodCallExpr.class);
 
-        Map<String, ResolvedType> types = sinkCall.getArguments().stream()
-                .collect(Collectors.toMap(Node::toString, Expression::calculateResolvedType));
+        Map<String, ResolvedType> types = sinkCall.getArguments().stream().collect(
+                Collectors.toMap(Node::toString, Expression::calculateResolvedType)
+        );
 
         assertEquals("java.lang.Float", types.get("i1").describe());
         assertEquals("java.lang.String", types.get("i2").describe());
     }
+
 }

@@ -21,6 +21,7 @@
 package com.github.javaparser.ast.validator;
 
 import com.github.javaparser.ast.Node;
+
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 

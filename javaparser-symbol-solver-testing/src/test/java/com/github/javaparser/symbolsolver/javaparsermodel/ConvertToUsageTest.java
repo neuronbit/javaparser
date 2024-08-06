@@ -21,16 +21,17 @@
 
 package com.github.javaparser.symbolsolver.javaparsermodel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.resolution.AbstractResolutionTest;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
-import java.util.List;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ConvertToUsageTest extends AbstractResolutionTest {
 
@@ -46,20 +47,14 @@ class ConvertToUsageTest extends AbstractResolutionTest {
         assertEquals("java.lang.Class<java.lang.Integer>", usageDescribe(n, "c"));
         assertEquals("java.lang.Class<? super java.lang.Integer>", usageDescribe(n, "d"));
         assertEquals("java.lang.Class<? extends java.lang.Integer>", usageDescribe(n, "e"));
-        assertEquals(
-                "java.lang.Class<? extends java.lang.Class<? super java.lang.Class<? extends java.lang.Integer>>>",
-                usageDescribe(n, "f"));
-        assertEquals(
-                "java.lang.Class<? super java.lang.Class<? extends java.lang.Class<? super java.lang.Integer>>>",
-                usageDescribe(n, "g"));
+        assertEquals("java.lang.Class<? extends java.lang.Class<? super java.lang.Class<? extends java.lang.Integer>>>", usageDescribe(n, "f"));
+        assertEquals("java.lang.Class<? super java.lang.Class<? extends java.lang.Class<? super java.lang.Integer>>>", usageDescribe(n, "g"));
     }
 
-    private String usageDescribe(List<NameExpr> n, String name) {
-        return n.stream()
-                .filter(x -> x.getNameAsString().equals(name))
+    private String usageDescribe(List<NameExpr> n, String name){
+        return n.stream().filter(x -> x.getNameAsString().equals(name))
                 .map(JavaParserFacade.get(typeSolver)::getType)
                 .map(ResolvedType::describe)
-                .findFirst()
-                .orElse(null);
+                .findFirst().orElse(null);
     }
 }

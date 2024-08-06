@@ -23,19 +23,24 @@ package com.github.javaparser.symbolsolver.javassistmodel;
 
 import com.github.javaparser.ast.AccessSpecifier;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.TypeSolver;
-import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedParameterDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
+import com.github.javaparser.resolution.declarations.*;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.core.resolution.TypeVariableResolutionCapability;
 import com.github.javaparser.symbolsolver.declarations.common.MethodDeclarationCommonLogic;
-import java.lang.reflect.Modifier;
-import java.util.List;
 import javassist.CtMethod;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.MethodInfo;
+import javassist.bytecode.annotation.Annotation;
+
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Federico Tomassetti
@@ -63,7 +68,9 @@ public class JavassistMethodDeclaration implements ResolvedMethodDeclaration, Ty
 
     @Override
     public String toString() {
-        return "JavassistMethodDeclaration{" + "ctMethod=" + ctMethod + '}';
+        return "JavassistMethodDeclaration{" +
+                "ctMethod=" + ctMethod +
+                '}';
     }
 
     @Override
@@ -121,6 +128,11 @@ public class JavassistMethodDeclaration implements ResolvedMethodDeclaration, Ty
     }
 
     @Override
+    public Optional<Node> getParentNode() {
+        return Optional.empty();
+    }
+
+    @Override
     public List<ResolvedTypeParameterDeclaration> getTypeParameters() {
         return methodLikeAdaper.getTypeParameters();
     }
@@ -143,5 +155,70 @@ public class JavassistMethodDeclaration implements ResolvedMethodDeclaration, Ty
     @Override
     public String toDescriptor() {
         return ctMethod.getMethodInfo().getDescriptor();
+    }
+
+
+    @Override
+    public boolean hasAnnotation(String typeName) {
+        if (typeName.contains(".")) {
+            String simpleName = typeName.substring(typeName.lastIndexOf('.') + 1);
+            return ctMethod.hasAnnotation(simpleName) || ctMethod.hasAnnotation(typeName);
+        } else {
+            return ctMethod.hasAnnotation(typeName);
+        }
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        List<ResolvedAnnotationExpr> result = new ArrayList<>(3);
+        MethodInfo minfo = ctMethod.getMethodInfo();
+        AnnotationsAttribute visibleAttr = (AnnotationsAttribute) minfo.getAttribute(AnnotationsAttribute.visibleTag);
+        if (null != visibleAttr) {
+            Annotation[] an = visibleAttr.getAnnotations();
+            if (null != an) {
+                for (Annotation annotation : an) {
+                    if (ResolvedDeclaration.isMatch(typeName, annotation.getTypeName())) {
+                        result.add(new JavassistResolvedAnnotationExpr(annotation));
+                    }
+                }
+            }
+        }
+        AnnotationsAttribute inVisibleAttr = (AnnotationsAttribute) minfo.getAttribute(AnnotationsAttribute.invisibleTag);
+        if (null != inVisibleAttr) {
+            Annotation[] an = inVisibleAttr.getAnnotations();
+            if (null != an) {
+                for (Annotation annotation : an) {
+                    if (ResolvedDeclaration.isMatch(typeName, annotation.getTypeName())) {
+                        result.add(new JavassistResolvedAnnotationExpr(annotation));
+                    }
+                }
+            }
+        }
+        return Optional.of(result);
+    }
+
+    @Override
+    public Optional<JavadocComment> getJavadocComment() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return Optional.empty();
+    }
+
+    @Override
+    public int getStartLineNumber() {
+        return -1;
+    }
+
+    @Override
+    public boolean isPublic() {
+        return Modifier.isPublic(ctMethod.getModifiers());
+    }
+
+    @Override
+    public boolean setJavadoc(Javadoc javadoc) {
+        return false;
     }
 }

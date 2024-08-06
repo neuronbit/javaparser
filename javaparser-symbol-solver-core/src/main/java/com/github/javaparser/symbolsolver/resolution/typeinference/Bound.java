@@ -22,6 +22,7 @@
 package com.github.javaparser.symbolsolver.resolution.typeinference;
 
 import com.github.javaparser.symbolsolver.resolution.typeinference.bounds.FalseBound;
+
 import java.util.Optional;
 import java.util.Set;
 
@@ -65,8 +66,7 @@ public abstract class Bound {
     }
 
     boolean isAnInstantiationFor(InferenceVariable v) {
-        return isAnInstantiation().isPresent()
-                && isAnInstantiation().get().getInferenceVariable().equals(v);
+        return isAnInstantiation().isPresent() && isAnInstantiation().get().getInferenceVariable().equals(v);
     }
 
     /**

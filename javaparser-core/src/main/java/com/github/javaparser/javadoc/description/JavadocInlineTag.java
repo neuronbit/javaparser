@@ -20,6 +20,9 @@
  */
 package com.github.javaparser.javadoc.description;
 
+import java.util.Objects;
+import java.util.Optional;
+
 import static com.github.javaparser.utils.Utils.nextWord;
 import static com.github.javaparser.utils.Utils.screamingToCamelCase;
 
@@ -40,8 +43,17 @@ public class JavadocInlineTag implements JavadocDescriptionElement {
         text = text.substring(2, text.length() - 1);
         String tagName = nextWord(text);
         Type type = Type.fromName(tagName);
-        String content = text.substring(tagName.length());
-        return new JavadocInlineTag(tagName, type, content);
+        Optional<String> content = Optional.empty();
+        Optional<String> label = Optional.empty();
+        if (type.hasContent()) {
+            text = text.substring(tagName.length()).trim();
+            content = Optional.of(nextWord(text));
+            if (type.hasLabel()) {
+                label = Optional.of(text.substring(content.get().length()).trim());
+            }
+        }
+
+        return new JavadocInlineTag(tagName, type, content, label);
     }
 
     /**
@@ -49,6 +61,7 @@ public class JavadocInlineTag implements JavadocDescriptionElement {
      * an unknown tag.
      */
     public enum Type {
+
         CODE,
         DOC_ROOT,
         INHERIT_DOC,
@@ -73,25 +86,36 @@ public class JavadocInlineTag implements JavadocDescriptionElement {
             }
             return UNKNOWN;
         }
+
+        boolean hasContent() {
+            return this == CODE || this == LINK || this == LINKPLAIN || this == LITERAL || this == VALUE;
+        }
+
+        boolean hasLabel() {
+            return this == LINK || this == LINKPLAIN;
+        }
     }
 
     private String tagName;
 
     private Type type;
 
-    private String content;
+    private Optional<String> content;
 
-    public JavadocInlineTag(String tagName, Type type, String content) {
+    private Optional<String> label;
+
+    public JavadocInlineTag(String tagName, Type type, Optional<String> content, Optional<String> label) {
         this.tagName = tagName;
         this.type = type;
         this.content = content;
+        this.label = label;
     }
 
     public Type getType() {
         return type;
     }
 
-    public String getContent() {
+    public Optional<String> getContent() {
         return content;
     }
 
@@ -99,32 +123,53 @@ public class JavadocInlineTag implements JavadocDescriptionElement {
         return tagName;
     }
 
+    public Optional<String> getLabel() {
+        return label;
+    }
+
     @Override
     public String toText() {
-        return "{@" + tagName + this.content + "}";
+        StringBuilder sb = new StringBuilder();
+        sb.append("{@");
+        sb.append(tagName);
+        this.content.ifPresent(s -> sb.append(" ").append(s));
+        this.label.ifPresent(s -> sb.append(" ").append(s));
+        sb.append("}");
+        return sb.toString();
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         JavadocInlineTag that = (JavadocInlineTag) o;
-        if (tagName != null ? !tagName.equals(that.tagName) : that.tagName != null) return false;
-        if (type != that.type) return false;
-        return content != null ? content.equals(that.content) : that.content == null;
+        if (!Objects.equals(tagName, that.tagName))
+            return false;
+        if (type != that.type)
+            return false;
+        if (!content.equals(that.content)) {
+            return false;
+        }
+        return label.equals(that.label);
     }
 
     @Override
     public int hashCode() {
         int result = tagName != null ? tagName.hashCode() : 0;
         result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (content.hashCode());
+        result = 31 * result + (label.hashCode());
         return result;
     }
 
     @Override
     public String toString() {
-        return "JavadocInlineTag{" + "tagName='" + tagName + '\'' + ", type=" + type + ", content='" + content + '\''
+        return "JavadocInlineTag{" + "tagName='" + tagName + '\''
+                + ", type=" + type
+                + ", content='" + content + '\''
+                + ", label='" + label + '\''
                 + '}';
     }
 }

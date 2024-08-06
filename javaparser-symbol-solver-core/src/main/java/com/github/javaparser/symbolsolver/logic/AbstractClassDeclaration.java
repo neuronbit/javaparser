@@ -24,6 +24,7 @@ package com.github.javaparser.symbolsolver.logic;
 import com.github.javaparser.resolution.declarations.ResolvedClassDeclaration;
 import com.github.javaparser.resolution.logic.MethodResolutionCapability;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,4 +86,5 @@ public abstract class AbstractClassDeclaration extends AbstractTypeDeclaration
      * An implementation of the Object class.
      */
     protected abstract ResolvedReferenceType object();
+
 }

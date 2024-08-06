@@ -25,6 +25,7 @@ import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionFactory;
+
 import java.util.Objects;
 import java.util.Optional;
 
@@ -79,8 +80,7 @@ public class ClassLoaderTypeSolver implements TypeSolver {
                 Class<?> clazz = classLoader.loadClass(name);
                 return SymbolReference.solved(ReflectionFactory.typeDeclarationFor(clazz, getRoot()));
             } catch (NoClassDefFoundError e) {
-                // We can safely ignore this one because it is triggered when there are package names which are almost
-                // the
+                // We can safely ignore this one because it is triggered when there are package names which are almost the
                 // same as class name, with the exclusion of the case.
                 // For example:
                 // java.lang.NoClassDefFoundError: com/github/javaparser/printer/ConcreteSyntaxModel
@@ -97,16 +97,17 @@ public class ClassLoaderTypeSolver implements TypeSolver {
                 String childName = name.substring(lastDot + 1);
                 SymbolReference<ResolvedReferenceTypeDeclaration> parent = tryToSolveType(parentName);
                 if (parent.isSolved()) {
-                    Optional<ResolvedReferenceTypeDeclaration> innerClass =
-                            parent.getCorrespondingDeclaration().internalTypes().stream()
-                                    .filter(it -> it.getName().equals(childName))
-                                    .findFirst();
-                    return innerClass.map(SymbolReference::solved).orElseGet(() -> SymbolReference.unsolved());
-                }
+                        Optional<ResolvedReferenceTypeDeclaration> innerClass = parent.getCorrespondingDeclaration()
+                                .internalTypes()
+                                .stream().filter(it -> it.getName().equals(childName)).findFirst();
+                        return innerClass.map(SymbolReference::solved)
+                                .orElseGet(() -> SymbolReference.unsolved());
+                    }
                 return SymbolReference.unsolved();
             }
         } else {
             return SymbolReference.unsolved();
         }
     }
+
 }

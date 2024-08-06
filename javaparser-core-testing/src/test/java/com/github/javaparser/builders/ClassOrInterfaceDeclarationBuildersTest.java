@@ -21,16 +21,18 @@
 
 package com.github.javaparser.builders;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.utils.LineSeparator;
-import java.util.List;
-import java.util.function.Function;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.function.Function;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClassOrInterfaceDeclarationBuildersTest {
     CompilationUnit cu;
@@ -50,8 +52,7 @@ class ClassOrInterfaceDeclarationBuildersTest {
         ClassOrInterfaceDeclaration testClass = cu.addClass("test");
         testClass.addExtendedType(List.class);
         assertEquals(1, cu.getImports().size());
-        assertEquals(
-                "import " + List.class.getName() + ";" + LineSeparator.SYSTEM,
+        assertEquals("import " + List.class.getName() + ";" + LineSeparator.SYSTEM,
                 cu.getImport(0).toString());
         assertEquals(1, testClass.getExtendedTypes().size());
         assertEquals(List.class.getSimpleName(), testClass.getExtendedTypes(0).getNameAsString());
@@ -62,11 +63,9 @@ class ClassOrInterfaceDeclarationBuildersTest {
         ClassOrInterfaceDeclaration testClass = cu.addClass("test");
         testClass.addImplementedType(Function.class);
         assertEquals(1, cu.getImports().size());
-        assertEquals(
-                "import " + Function.class.getName() + ";" + LineSeparator.SYSTEM,
+        assertEquals("import " + Function.class.getName() + ";" + LineSeparator.SYSTEM,
                 cu.getImport(0).toString());
         assertEquals(1, testClass.getImplementedTypes().size());
-        assertEquals(
-                Function.class.getSimpleName(), testClass.getImplementedTypes(0).getNameAsString());
+        assertEquals(Function.class.getSimpleName(), testClass.getImplementedTypes(0).getNameAsString());
     }
 }

@@ -17,13 +17,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
+
 package com.github.javaparser.printer.lexicalpreservation;
 
 import java.util.NoSuchElementException;
 
 public interface LookaheadIterator<E> {
 
-    /**
+	/**
      * Returns the next element in iteration without advancing the underlying iterator.
      * If the iterator is already exhausted, null will be returned.
      * <p>
@@ -45,4 +46,5 @@ public interface LookaheadIterator<E> {
      * @throws NoSuchElementException if the iterator is already exhausted according to {@link #hasNext()}
      */
     public E element();
+
 }

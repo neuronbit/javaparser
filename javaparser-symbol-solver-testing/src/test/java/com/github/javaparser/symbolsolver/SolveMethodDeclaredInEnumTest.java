@@ -21,9 +21,6 @@
 
 package com.github.javaparser.symbolsolver;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseStart;
 import com.github.javaparser.ParserConfiguration;
@@ -35,9 +32,13 @@ import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Path;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SolveMethodDeclaredInEnumTest extends AbstractSymbolResolutionTest {
 
@@ -47,14 +48,11 @@ class SolveMethodDeclaredInEnumTest extends AbstractSymbolResolutionTest {
         Path jarPath = adaptPath("src/test/resources/solveMethodDeclaredInEnum/MyEnum.jar");
         TypeSolver typeSolver = new CombinedTypeSolver(new JarTypeSolver(jarPath), new ReflectionTypeSolver());
 
-        ParserConfiguration parserConfiguration =
-                new ParserConfiguration().setSymbolResolver(new JavaSymbolSolver(typeSolver));
+        ParserConfiguration parserConfiguration = new ParserConfiguration().setSymbolResolver(
+                new JavaSymbolSolver(typeSolver));
         JavaParser javaParser = new JavaParser(parserConfiguration);
 
-        CompilationUnit cu = javaParser
-                .parse(ParseStart.COMPILATION_UNIT, new StringProvider(code))
-                .getResult()
-                .get();
+        CompilationUnit cu = javaParser.parse(ParseStart.COMPILATION_UNIT, new StringProvider(code)).getResult().get();
 
         MethodCallExpr call = cu.findFirst(MethodCallExpr.class).orElse(null);
         ResolvedMethodDeclaration resolvedCall = call.resolve();
@@ -62,4 +60,5 @@ class SolveMethodDeclaredInEnumTest extends AbstractSymbolResolutionTest {
         assertNotNull(resolvedCall);
         assertEquals("MyEnum.method()", resolvedCall.getQualifiedSignature());
     }
+
 }

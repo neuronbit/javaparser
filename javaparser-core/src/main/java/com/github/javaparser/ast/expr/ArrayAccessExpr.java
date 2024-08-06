@@ -20,8 +20,6 @@
  */
 package com.github.javaparser.ast.expr;
 
-import static com.github.javaparser.utils.Utils.assertNotNull;
-
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Generated;
@@ -32,8 +30,11 @@ import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.metamodel.ArrayAccessExprMetaModel;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
+
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static com.github.javaparser.utils.Utils.assertNotNull;
 
 /**
  * Array brackets [] being used to get a value from an array.
@@ -96,7 +97,8 @@ public class ArrayAccessExpr extends Expression {
             return this;
         }
         notifyPropertyChange(ObservableProperty.INDEX, this.index, index);
-        if (this.index != null) this.index.setParentNode(null);
+        if (this.index != null)
+            this.index.setParentNode(null);
         this.index = index;
         setAsParentNodeOf(index);
         return this;
@@ -109,7 +111,8 @@ public class ArrayAccessExpr extends Expression {
             return this;
         }
         notifyPropertyChange(ObservableProperty.NAME, this.name, name);
-        if (this.name != null) this.name.setParentNode(null);
+        if (this.name != null)
+            this.name.setParentNode(null);
         this.name = name;
         setAsParentNodeOf(name);
         return this;

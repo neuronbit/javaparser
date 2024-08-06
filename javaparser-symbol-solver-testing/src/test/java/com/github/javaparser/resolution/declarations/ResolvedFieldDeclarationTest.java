@@ -21,9 +21,9 @@
 
 package com.github.javaparser.resolution.declarations;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public interface ResolvedFieldDeclarationTest extends ResolvedValueDeclarationTest, HasAccessSpecifierTest {
 
@@ -52,4 +52,5 @@ public interface ResolvedFieldDeclarationTest extends ResolvedValueDeclarationTe
     default void theDeclaringTypeCantBeNull() {
         assertNotNull(createValue().declaringType());
     }
+
 }

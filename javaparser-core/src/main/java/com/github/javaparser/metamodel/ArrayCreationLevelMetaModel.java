@@ -22,6 +22,7 @@ package com.github.javaparser.metamodel;
 
 import com.github.javaparser.ast.ArrayCreationLevel;
 import com.github.javaparser.ast.Generated;
+
 import java.util.Optional;
 
 /**
@@ -38,13 +39,7 @@ public class ArrayCreationLevelMetaModel extends NodeMetaModel {
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
     ArrayCreationLevelMetaModel(Optional<BaseNodeMetaModel> superBaseNodeMetaModel) {
-        super(
-                superBaseNodeMetaModel,
-                ArrayCreationLevel.class,
-                "ArrayCreationLevel",
-                "com.github.javaparser.ast",
-                false,
-                false);
+        super(superBaseNodeMetaModel, ArrayCreationLevel.class, "ArrayCreationLevel", "com.github.javaparser.ast", false, false);
     }
 
     public PropertyMetaModel annotationsPropertyMetaModel;

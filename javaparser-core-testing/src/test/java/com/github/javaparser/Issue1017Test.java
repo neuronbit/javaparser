@@ -34,4 +34,5 @@ public class Issue1017Test {
             CompilationUnit cu = StaticJavaParser.parse(code);
         });
     }
+
 }

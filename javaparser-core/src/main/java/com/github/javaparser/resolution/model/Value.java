@@ -18,6 +18,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
+
 package com.github.javaparser.resolution.model;
 
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
@@ -29,9 +30,7 @@ import com.github.javaparser.resolution.types.ResolvedType;
  * @author Federico Tomassetti
  */
 public class Value {
-
     private ResolvedType type;
-
     private String name;
 
     public Value(ResolvedType type, String name) {
@@ -49,7 +48,10 @@ public class Value {
 
     @Override
     public String toString() {
-        return "Value{" + "type=" + type + ", name='" + name + '\'' + '}';
+        return "Value{" +
+                "type=" + type +
+                ", name='" + name + '\'' +
+                '}';
     }
 
     public String getName() {
@@ -59,4 +61,5 @@ public class Value {
     public ResolvedType getType() {
         return type;
     }
+
 }

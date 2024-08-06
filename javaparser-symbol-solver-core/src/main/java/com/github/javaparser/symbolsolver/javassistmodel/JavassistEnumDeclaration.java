@@ -21,7 +21,11 @@
 
 package com.github.javaparser.symbolsolver.javassistmodel;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 import com.github.javaparser.ast.AccessSpecifier;
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.TypeSolver;
@@ -35,23 +39,20 @@ import com.github.javaparser.symbolsolver.core.resolution.MethodUsageResolutionC
 import com.github.javaparser.symbolsolver.core.resolution.SymbolResolutionCapability;
 import com.github.javaparser.symbolsolver.logic.AbstractTypeDeclaration;
 import com.github.javaparser.symbolsolver.resolution.SymbolSolver;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.bytecode.AccessFlag;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.annotation.Annotation;
 
 /**
  * @author Federico Tomassetti
  */
 public class JavassistEnumDeclaration extends AbstractTypeDeclaration
-        implements ResolvedEnumDeclaration,
-                MethodResolutionCapability,
-                MethodUsageResolutionCapability,
-                SymbolResolutionCapability {
+        implements ResolvedEnumDeclaration, MethodResolutionCapability, MethodUsageResolutionCapability,
+        SymbolResolutionCapability {
 
     private CtClass ctClass;
     private TypeSolver typeSolver;
@@ -62,9 +63,7 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
             throw new IllegalArgumentException();
         }
         if (!ctClass.isEnum()) {
-            throw new IllegalArgumentException(
-                    "Trying to instantiate a JavassistEnumDeclaration with something which is not an enum: "
-                            + ctClass.toString());
+            throw new IllegalArgumentException("Trying to instantiate a JavassistEnumDeclaration with something which is not an enum: " + ctClass.toString());
         }
         this.ctClass = ctClass;
         this.typeSolver = typeSolver;
@@ -102,18 +101,14 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
 
     @Override
     public ResolvedFieldDeclaration getField(String name) {
-        Optional<ResolvedFieldDeclaration> field = javassistTypeDeclarationAdapter.getDeclaredFields().stream()
-                .filter(f -> f.getName().equals(name))
-                .findFirst();
+        Optional<ResolvedFieldDeclaration> field = javassistTypeDeclarationAdapter.getDeclaredFields().stream().filter(f -> f.getName().equals(name)).findFirst();
 
-        return field.orElseThrow(
-                () -> new RuntimeException("Field " + name + " does not exist in " + ctClass.getName() + "."));
+        return field.orElseThrow(() -> new RuntimeException("Field " + name + " does not exist in " + ctClass.getName() + "."));
     }
 
     @Override
     public boolean hasField(String name) {
-        return javassistTypeDeclarationAdapter.getDeclaredFields().stream()
-                .anyMatch(f -> f.getName().equals(name));
+        return javassistTypeDeclarationAdapter.getDeclaredFields().stream().anyMatch(f -> f.getName().equals(name));
     }
 
     @Override
@@ -148,12 +143,12 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
 
     @Override
     public boolean isAssignableBy(ResolvedType type) {
-        return javassistTypeDeclarationAdapter.isAssignableBy(type);
+    	return javassistTypeDeclarationAdapter.isAssignableBy(type);
     }
 
     @Override
     public boolean isAssignableBy(ResolvedReferenceTypeDeclaration other) {
-        return javassistTypeDeclarationAdapter.isAssignableBy(other);
+    	return javassistTypeDeclarationAdapter.isAssignableBy(other);
     }
 
     @Override
@@ -178,19 +173,14 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
     }
 
     @Override
-    public SymbolReference<ResolvedMethodDeclaration> solveMethod(
-            String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+    public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
         return JavassistUtils.solveMethod(name, argumentsTypes, staticOnly, typeSolver, this, ctClass);
     }
 
     @Override
-    public Optional<MethodUsage> solveMethodAsUsage(
-            String name,
-            List<ResolvedType> argumentsTypes,
-            Context invokationContext,
-            List<ResolvedType> typeParameterValues) {
-        return JavassistUtils.solveMethodAsUsage(
-                name, argumentsTypes, typeSolver, invokationContext, typeParameterValues, this, ctClass);
+	public Optional<MethodUsage> solveMethodAsUsage(String name, List<ResolvedType> argumentsTypes,
+                                                    Context invokationContext, List<ResolvedType> typeParameterValues) {
+        return JavassistUtils.solveMethodAsUsage(name, argumentsTypes, typeSolver, invokationContext, typeParameterValues, this, ctClass);
     }
 
     @Override
@@ -204,10 +194,10 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
         The name of the ReferenceTypeDeclaration could be composed on the internal class and the outer class, e.g. A$B. That's why we search the internal type in the ending part.
         In case the name is composed of the internal type only, i.e. f.getName() returns B, it will also works.
          */
-        Optional<ResolvedReferenceTypeDeclaration> type = this.internalTypes().stream()
-                .filter(f -> f.getName().endsWith(name))
-                .findFirst();
-        return type.orElseThrow(() -> new UnsolvedSymbolException("Internal type not found: " + name));
+        Optional<ResolvedReferenceTypeDeclaration> type =
+                this.internalTypes().stream().filter(f -> f.getName().endsWith(name)).findFirst();
+        return type.orElseThrow(() ->
+                new UnsolvedSymbolException("Internal type not found: " + name));
     }
 
     @Override
@@ -266,6 +256,72 @@ public class JavassistEnumDeclaration extends AbstractTypeDeclaration
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" + "ctClass=" + ctClass.getName() + ", typeSolver=" + typeSolver + '}';
+        return getClass().getSimpleName() + "{" +
+                "ctClass=" + ctClass.getName() +
+                ", typeSolver=" + typeSolver +
+                '}';
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<ResolvedAnnotationExpr> getAnnotations() {
+        List<ResolvedAnnotationExpr> result = new ArrayList<>(3);
+        AnnotationsAttribute visibleAnnoAttr = (AnnotationsAttribute) ctClass.getClassFile2().getAttribute(AnnotationsAttribute.visibleTag);
+        if (null != visibleAnnoAttr) {
+            Annotation[] an = visibleAnnoAttr.getAnnotations();
+            if (null != an) {
+                for (Annotation annotation : an) {
+                    result.add(new JavassistResolvedAnnotationExpr(annotation));
+                }
+            }
+        }
+        AnnotationsAttribute inVisibleAnnoAttr = (AnnotationsAttribute) ctClass.getClassFile2().getAttribute(AnnotationsAttribute.invisibleTag);
+        if (null != inVisibleAnnoAttr) {
+            Annotation[] an = inVisibleAnnoAttr.getAnnotations();
+            if (null != an) {
+                for (Annotation annotation : an) {
+                    result.add(new JavassistResolvedAnnotationExpr(annotation));
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        List<ResolvedAnnotationExpr> result = new ArrayList<>(3);
+        ClassFile classFile2 = ctClass.getClassFile2();
+        AnnotationsAttribute visibleAttr = (AnnotationsAttribute) classFile2.getAttribute(AnnotationsAttribute.visibleTag);
+        if (null != visibleAttr) {
+            Annotation[] an = visibleAttr.getAnnotations();
+            if (null != an) {
+                for (Annotation annotation : an) {
+                    if (ResolvedDeclaration.isMatch(typeName, annotation.getTypeName())) {
+                        result.add(new JavassistResolvedAnnotationExpr(annotation));
+                    }
+                }
+            }
+        }
+        AnnotationsAttribute inVisibleAttr = (AnnotationsAttribute) classFile2.getAttribute(AnnotationsAttribute.invisibleTag);
+        if (null != inVisibleAttr) {
+            Annotation[] an = inVisibleAttr.getAnnotations();
+            if (null != an) {
+                for (Annotation annotation : an) {
+                    if (ResolvedDeclaration.isMatch(typeName, annotation.getTypeName())) {
+                        result.add(new JavassistResolvedAnnotationExpr(annotation));
+                    }
+                }
+            }
+        }
+        return Optional.of(result);
+    }
+
+    @Override
+    public boolean setJavadoc(Javadoc javadoc) {
+        return false;
     }
 }

@@ -22,12 +22,19 @@
 package com.github.javaparser.symbolsolver.reflectionmodel;
 
 import com.github.javaparser.ast.AccessSpecifier;
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.TypeSolver;
+import com.github.javaparser.resolution.declarations.ResolvedAnnotationExpr;
 import com.github.javaparser.resolution.declarations.ResolvedFieldDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Federico Tomassetti
@@ -69,7 +76,7 @@ public class ReflectionFieldDeclaration implements ResolvedFieldDeclaration {
     public boolean isStatic() {
         return Modifier.isStatic(field.getModifiers());
     }
-
+    
     @Override
     public boolean isVolatile() {
         return Modifier.isVolatile(field.getModifiers());
@@ -102,5 +109,52 @@ public class ReflectionFieldDeclaration implements ResolvedFieldDeclaration {
     @Override
     public AccessSpecifier accessSpecifier() {
         return ReflectionFactory.modifiersToAccessLevel(field.getModifiers());
+    }
+
+    @Override
+    public boolean isTransient() {
+        return Modifier.isTransient(field.getModifiers());
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        if (typeName.contains(".")) {
+            String simpleName = typeName.substring(typeName.lastIndexOf('.') + 1);
+            return Optional.of(Arrays.stream(this.field.getAnnotations())
+                    .filter(a -> a.annotationType().getName().equals(simpleName) || a.annotationType().getCanonicalName().equals(typeName))
+                    .map(ReflectionResolvedAnnotationExpr::new)
+                    .collect(Collectors.toList()));
+        } else {
+            return Optional.of(Arrays.stream(this.field.getAnnotations())
+                    .filter(a -> a.annotationType().getName().equals(typeName))
+                    .map(ReflectionResolvedAnnotationExpr::new)
+                    .collect(Collectors.toList()));
+        }
+    }
+
+    @Override
+    public boolean isEnumConstant() {
+        return this.field.isEnumConstant();
+    }
+
+    @Override
+    public Object getInitialValue() {
+        try {
+            return field.get(null);
+        } catch (IllegalAccessException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<ResolvedAnnotationExpr> getAnnotations() {
+        return Arrays.stream(this.field.getAnnotations())
+                .map(ReflectionResolvedAnnotationExpr::new)
+                .collect(Collectors.toList());
     }
 }

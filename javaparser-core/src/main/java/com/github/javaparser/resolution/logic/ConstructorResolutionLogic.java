@@ -18,6 +18,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
+
 package com.github.javaparser.resolution.logic;
 
 import com.github.javaparser.resolution.MethodAmbiguityException;
@@ -27,6 +28,7 @@ import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclar
 import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.resolution.types.ResolvedArrayType;
 import com.github.javaparser.resolution.types.ResolvedType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +40,8 @@ import java.util.stream.Collectors;
  */
 public class ConstructorResolutionLogic {
 
-    private static List<ResolvedType> groupVariadicParamValues(
-            List<ResolvedType> argumentsTypes, int startVariadic, ResolvedType variadicType) {
+    private static List<ResolvedType> groupVariadicParamValues(List<ResolvedType> argumentsTypes, int startVariadic,
+                                                               ResolvedType variadicType) {
         List<ResolvedType> res = new ArrayList<>(argumentsTypes.subList(0, startVariadic));
         List<ResolvedType> variadicValues = argumentsTypes.subList(startVariadic, argumentsTypes.size());
         if (variadicValues.isEmpty()) {
@@ -60,16 +62,13 @@ public class ConstructorResolutionLogic {
         return variadicValues.get(0);
     }
 
-    public static boolean isApplicable(
-            ResolvedConstructorDeclaration constructor, List<ResolvedType> argumentsTypes, TypeSolver typeSolver) {
+    public static boolean isApplicable(ResolvedConstructorDeclaration constructor, List<ResolvedType> argumentsTypes,
+                                       TypeSolver typeSolver) {
         return isApplicable(constructor, argumentsTypes, typeSolver, false);
     }
 
-    private static boolean isApplicable(
-            ResolvedConstructorDeclaration constructor,
-            List<ResolvedType> argumentsTypes,
-            TypeSolver typeSolver,
-            boolean withWildcardTolerance) {
+    private static boolean isApplicable(ResolvedConstructorDeclaration constructor, List<ResolvedType> argumentsTypes,
+                                        TypeSolver typeSolver, boolean withWildcardTolerance) {
         if (constructor.hasVariadicParameter()) {
             int pos = constructor.getNumberOfParams() - 1;
             if (constructor.getNumberOfParams() == argumentsTypes.size()) {
@@ -82,26 +81,23 @@ public class ConstructorResolutionLogic {
                     }
                     if (!expectedType.isAssignableBy(actualType)) {
                         if (actualType.isArray()
-                                && expectedType.isAssignableBy(
-                                        actualType.asArrayType().getComponentType())) {
+                                && expectedType.isAssignableBy(actualType.asArrayType().getComponentType())) {
                             argumentsTypes.set(pos, actualType.asArrayType().getComponentType());
                         } else {
-                            argumentsTypes = groupVariadicParamValues(
-                                    argumentsTypes,
-                                    pos,
+                            argumentsTypes = groupVariadicParamValues(argumentsTypes, pos,
                                     constructor.getLastParam().getType());
                         }
                     }
-                }
-                // else it is already assignable, nothing to do
+                } // else it is already assignable, nothing to do
             } else {
                 if (pos > argumentsTypes.size()) {
                     return false;
                 }
-                argumentsTypes = groupVariadicParamValues(
-                        argumentsTypes, pos, constructor.getLastParam().getType());
+                argumentsTypes =
+                        groupVariadicParamValues(argumentsTypes, pos, constructor.getLastParam().getType());
             }
         }
+
         if (constructor.getNumberOfParams() != argumentsTypes.size()) {
             return false;
         }
@@ -115,10 +111,11 @@ public class ConstructorResolutionLogic {
                 matchedParameters.put(expectedType.asTypeParameter().getName(), actualType);
                 continue;
             }
-            boolean isAssignableWithoutSubstitution = expectedType.isAssignableBy(actualType)
-                    || (constructor.getParam(i).isVariadic()
+            boolean isAssignableWithoutSubstitution =
+                    expectedType.isAssignableBy(actualType) || (constructor.getParam(i).isVariadic()
                             && new ResolvedArrayType(expectedType).isAssignableBy(actualType));
-            if (!isAssignableWithoutSubstitution && expectedType.isReferenceType() && actualType.isReferenceType()) {
+            if (!isAssignableWithoutSubstitution && expectedType.isReferenceType()
+                    && actualType.isReferenceType()) {
                 isAssignableWithoutSubstitution = MethodResolutionLogic.isAssignableMatchTypeParameters(
                         expectedType.asReferenceType(), actualType.asReferenceType(), matchedParameters);
             }
@@ -126,10 +123,10 @@ public class ConstructorResolutionLogic {
                 for (ResolvedTypeParameterDeclaration tp : constructor.getTypeParameters()) {
                     expectedType = MethodResolutionLogic.replaceTypeParam(expectedType, tp, typeSolver);
                 }
-                for (ResolvedTypeParameterDeclaration tp :
-                        constructor.declaringType().getTypeParameters()) {
+                for (ResolvedTypeParameterDeclaration tp : constructor.declaringType().getTypeParameters()) {
                     expectedType = MethodResolutionLogic.replaceTypeParam(expectedType, tp, typeSolver);
                 }
+
                 if (!expectedType.isAssignableBy(actualType)) {
                     if (actualType.isWildcard() && withWildcardTolerance && !expectedType.isPrimitive()) {
                         needForWildCardTolerance = true;
@@ -154,9 +151,7 @@ public class ConstructorResolutionLogic {
      * @return
      */
     public static SymbolReference<ResolvedConstructorDeclaration> findMostApplicable(
-            List<ResolvedConstructorDeclaration> constructors,
-            List<ResolvedType> argumentsTypes,
-            TypeSolver typeSolver) {
+            List<ResolvedConstructorDeclaration> constructors, List<ResolvedType> argumentsTypes, TypeSolver typeSolver) {
         SymbolReference<ResolvedConstructorDeclaration> res =
                 findMostApplicable(constructors, argumentsTypes, typeSolver, false);
         if (res.isSolved()) {
@@ -166,13 +161,8 @@ public class ConstructorResolutionLogic {
     }
 
     public static SymbolReference<ResolvedConstructorDeclaration> findMostApplicable(
-            List<ResolvedConstructorDeclaration> constructors,
-            List<ResolvedType> argumentsTypes,
-            TypeSolver typeSolver,
-            boolean wildcardTolerance) {
-        List<ResolvedConstructorDeclaration> applicableConstructors = constructors.stream()
-                .filter((m) -> isApplicable(m, argumentsTypes, typeSolver, wildcardTolerance))
-                .collect(Collectors.toList());
+            List<ResolvedConstructorDeclaration> constructors, List<ResolvedType> argumentsTypes, TypeSolver typeSolver, boolean wildcardTolerance) {
+        List<ResolvedConstructorDeclaration> applicableConstructors = constructors.stream().filter((m) -> isApplicable(m, argumentsTypes, typeSolver, wildcardTolerance)).collect(Collectors.toList());
         if (applicableConstructors.isEmpty()) {
             return SymbolReference.unsolved();
         }
@@ -183,42 +173,36 @@ public class ConstructorResolutionLogic {
         ResolvedConstructorDeclaration other = null;
         boolean possibleAmbiguity = false;
         for (int i = 1; i < applicableConstructors.size(); i++) {
-            other = applicableConstructors.get(i);
-            if (isMoreSpecific(winningCandidate, other, typeSolver)) {
-                possibleAmbiguity = false;
-            } else if (isMoreSpecific(other, winningCandidate, typeSolver)) {
-                possibleAmbiguity = false;
-                winningCandidate = other;
-            } else {
-                if (winningCandidate
-                        .declaringType()
-                        .getQualifiedName()
-                        .equals(other.declaringType().getQualifiedName())) {
-                    possibleAmbiguity = true;
+                other = applicableConstructors.get(i);
+                if (isMoreSpecific(winningCandidate, other, typeSolver)) {
+                    possibleAmbiguity = false;
+                } else if (isMoreSpecific(other, winningCandidate, typeSolver)) {
+                    possibleAmbiguity = false;
+                    winningCandidate = other;
                 } else {
-                    // we expect the methods to be ordered such that inherited methods are later in the list
-                }
-            }
-            if (possibleAmbiguity) {
-                // pick the first exact match if it exists
-                if (!MethodResolutionLogic.isExactMatch(winningCandidate, argumentsTypes)) {
-                    if (MethodResolutionLogic.isExactMatch(other, argumentsTypes)) {
-                        winningCandidate = other;
+                    if (winningCandidate.declaringType().getQualifiedName()
+                            .equals(other.declaringType().getQualifiedName())) {
+                        possibleAmbiguity = true;
                     } else {
-                        throw new MethodAmbiguityException(
-                                "Ambiguous constructor call: cannot find a most applicable constructor: "
-                                        + winningCandidate + ", " + other);
+                        // we expect the methods to be ordered such that inherited methods are later in the list
+                    }
+                }
+                if (possibleAmbiguity) {
+                    // pick the first exact match if it exists
+                    if (!MethodResolutionLogic.isExactMatch(winningCandidate, argumentsTypes)) {
+                        if (MethodResolutionLogic.isExactMatch(other, argumentsTypes)) {
+                            winningCandidate = other;
+                        } else {
+                            throw new MethodAmbiguityException("Ambiguous constructor call: cannot find a most applicable constructor: " + winningCandidate + ", " + other);
+                        }
                     }
                 }
             }
-        }
         return SymbolReference.solved(winningCandidate);
     }
 
-    private static boolean isMoreSpecific(
-            ResolvedConstructorDeclaration constructorA,
-            ResolvedConstructorDeclaration constructorB,
-            TypeSolver typeSolver) {
+    private static boolean isMoreSpecific(ResolvedConstructorDeclaration constructorA,
+                                          ResolvedConstructorDeclaration constructorB, TypeSolver typeSolver) {
         boolean oneMoreSpecificFound = false;
         if (constructorA.getNumberOfParams() < constructorB.getNumberOfParams()) {
             return true;
@@ -248,4 +232,5 @@ public class ConstructorResolutionLogic {
         }
         return oneMoreSpecificFound;
     }
+
 }

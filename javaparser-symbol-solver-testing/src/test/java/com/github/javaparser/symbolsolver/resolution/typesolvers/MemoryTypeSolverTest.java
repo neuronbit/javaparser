@@ -20,11 +20,11 @@
 
 package com.github.javaparser.symbolsolver.resolution.typesolvers;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionFactory;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class MemoryTypeSolverTest extends AbstractTypeSolverTest<MemoryTypeSolver> {
 
@@ -42,12 +42,8 @@ class MemoryTypeSolverTest extends AbstractTypeSolverTest<MemoryTypeSolver> {
         Class<Integer> expectedNonExistingClass = Integer.class;
 
         MemoryTypeSolver memoryTypeSolver = createTypeSolver(expectedExistingClass);
-        assertFalse(memoryTypeSolver
-                .tryToSolveType(expectedNonExistingClass.getCanonicalName())
-                .isSolved());
-        assertTrue(memoryTypeSolver
-                .tryToSolveType(expectedExistingClass.getCanonicalName())
-                .isSolved());
+        assertFalse(memoryTypeSolver.tryToSolveType(expectedNonExistingClass.getCanonicalName()).isSolved());
+        assertTrue(memoryTypeSolver.tryToSolveType(expectedExistingClass.getCanonicalName()).isSolved());
     }
 
     /**
@@ -111,4 +107,5 @@ class MemoryTypeSolverTest extends AbstractTypeSolverTest<MemoryTypeSolver> {
         ResolvedReferenceTypeDeclaration declaration = ReflectionFactory.typeDeclarationFor(clazz, memorySolver);
         memorySolver.addDeclaration(clazz.getCanonicalName(), declaration);
     }
+
 }

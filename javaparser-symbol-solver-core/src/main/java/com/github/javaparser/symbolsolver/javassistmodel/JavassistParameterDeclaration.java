@@ -22,9 +22,17 @@
 package com.github.javaparser.symbolsolver.javassistmodel;
 
 import com.github.javaparser.resolution.TypeSolver;
+import com.github.javaparser.resolution.declarations.ResolvedAnnotationExpr;
+import com.github.javaparser.resolution.declarations.ResolvedDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedParameterDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import javassist.CtClass;
+import javassist.bytecode.annotation.Annotation;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Federico Tomassetti
@@ -34,24 +42,27 @@ public class JavassistParameterDeclaration implements ResolvedParameterDeclarati
     private TypeSolver typeSolver;
     private boolean variadic;
     private String name;
+    private final Annotation[] annotations;
 
-    public JavassistParameterDeclaration(CtClass type, TypeSolver typeSolver, boolean variadic, String name) {
-        this(JavassistFactory.typeUsageFor(type, typeSolver), typeSolver, variadic, name);
+    public JavassistParameterDeclaration(CtClass type, TypeSolver typeSolver, boolean variadic, String name, Annotation[] annotations) {
+        this(JavassistFactory.typeUsageFor(type, typeSolver), typeSolver, variadic, name, annotations);
     }
 
-    public JavassistParameterDeclaration(ResolvedType type, TypeSolver typeSolver, boolean variadic, String name) {
+    public JavassistParameterDeclaration(ResolvedType type, TypeSolver typeSolver, boolean variadic, String name, Annotation[] annotations) {
         this.name = name;
         this.type = type;
         this.typeSolver = typeSolver;
         this.variadic = variadic;
+        this.annotations = annotations;
     }
 
     @Override
     public String toString() {
-        return "JavassistParameterDeclaration{" + "type="
-                + type + ", typeSolver="
-                + typeSolver + ", variadic="
-                + variadic + '}';
+        return "JavassistParameterDeclaration{" +
+                "type=" + type +
+                ", typeSolver=" + typeSolver +
+                ", variadic=" + variadic +
+                '}';
     }
 
     @Override
@@ -87,5 +98,31 @@ public class JavassistParameterDeclaration implements ResolvedParameterDeclarati
     @Override
     public ResolvedType getType() {
         return type;
+    }
+
+    @Override
+    public boolean hasAnnotation(String typeName) {
+        if (null == annotations) {
+            return false;
+        }
+        if (typeName.contains(".")) {
+            String simpleName = typeName.substring(typeName.lastIndexOf('.') + 1);
+            return Arrays.stream(annotations).anyMatch(annotation -> annotation.getTypeName().equals(simpleName) || annotation.getTypeName().equals(typeName));
+        } else {
+            return Arrays.stream(annotations).anyMatch(annotation -> annotation.getTypeName().equals(typeName));
+        }
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        List<ResolvedAnnotationExpr> result = new ArrayList<>(3);
+        if (null != annotations) {
+            for (Annotation annotation : annotations) {
+                if (ResolvedDeclaration.isMatch(typeName, annotation.getTypeName())) {
+                    result.add(new JavassistResolvedAnnotationExpr(annotation));
+                }
+            }
+        }
+        return Optional.of(result);
     }
 }

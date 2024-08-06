@@ -20,8 +20,6 @@
 
 package com.github.javaparser;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.PackageDeclaration;
@@ -35,14 +33,18 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.type.TypeParameter;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import java.io.ByteArrayInputStream;
 import java.io.CharArrayReader;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 
 class JavaParserAdapterTest {
 
@@ -281,4 +283,5 @@ class JavaParserAdapterTest {
 
         Mockito.verify(javaParser).parseMethodDeclaration("void test() {}");
     }
+
 }

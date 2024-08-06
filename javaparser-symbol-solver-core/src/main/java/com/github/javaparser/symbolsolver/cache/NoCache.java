@@ -21,9 +21,10 @@
 
 package com.github.javaparser.symbolsolver.cache;
 
+import java.util.Optional;
+
 import com.github.javaparser.resolution.cache.Cache;
 import com.github.javaparser.resolution.cache.CacheStats;
-import java.util.Optional;
 
 /**
  * A cache implementation that does not store any information.
@@ -80,8 +81,9 @@ public class NoCache<K, V> implements Cache<K, V> {
         return true;
     }
 
-    @Override
-    public CacheStats stats() {
-        return new DefaultCacheStats();
-    }
+	@Override
+	public CacheStats stats() {
+		return new DefaultCacheStats();
+	}
+
 }

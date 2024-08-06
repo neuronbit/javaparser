@@ -21,11 +21,11 @@
 
 package com.github.javaparser.resolution.declarations;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public interface ResolvedTypeParametrizableTest {
 
@@ -43,4 +43,5 @@ public interface ResolvedTypeParametrizableTest {
         ResolvedTypeParametrizable typeParametrizable = createValue();
         assertThrows(IllegalArgumentException.class, () -> typeParametrizable.findTypeParameter(null));
     }
+
 }

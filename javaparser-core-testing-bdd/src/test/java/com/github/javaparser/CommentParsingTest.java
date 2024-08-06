@@ -39,3 +39,4 @@ public class CommentParsingTest extends BasicJBehaveTest {
         super("**/comment*.story");
     }
 }
+

@@ -22,6 +22,7 @@ package com.github.javaparser.metamodel;
 
 import com.github.javaparser.ast.Generated;
 import com.github.javaparser.ast.modules.ModuleOpensDirective;
+
 import java.util.Optional;
 
 /**
@@ -38,13 +39,7 @@ public class ModuleOpensDirectiveMetaModel extends ModuleDirectiveMetaModel {
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
     ModuleOpensDirectiveMetaModel(Optional<BaseNodeMetaModel> superBaseNodeMetaModel) {
-        super(
-                superBaseNodeMetaModel,
-                ModuleOpensDirective.class,
-                "ModuleOpensDirective",
-                "com.github.javaparser.ast.modules",
-                false,
-                false);
+        super(superBaseNodeMetaModel, ModuleOpensDirective.class, "ModuleOpensDirective", "com.github.javaparser.ast.modules", false, false);
     }
 
     public PropertyMetaModel moduleNamesPropertyMetaModel;

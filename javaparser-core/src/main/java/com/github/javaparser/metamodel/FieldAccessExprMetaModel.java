@@ -22,6 +22,7 @@ package com.github.javaparser.metamodel;
 
 import com.github.javaparser.ast.Generated;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
+
 import java.util.Optional;
 
 /**
@@ -38,13 +39,7 @@ public class FieldAccessExprMetaModel extends ExpressionMetaModel {
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
     FieldAccessExprMetaModel(Optional<BaseNodeMetaModel> superBaseNodeMetaModel) {
-        super(
-                superBaseNodeMetaModel,
-                FieldAccessExpr.class,
-                "FieldAccessExpr",
-                "com.github.javaparser.ast.expr",
-                false,
-                false);
+        super(superBaseNodeMetaModel, FieldAccessExpr.class, "FieldAccessExpr", "com.github.javaparser.ast.expr", false, false);
     }
 
     public PropertyMetaModel namePropertyMetaModel;

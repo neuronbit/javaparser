@@ -22,6 +22,7 @@ package com.github.javaparser.metamodel;
 
 import com.github.javaparser.ast.Generated;
 import com.github.javaparser.ast.body.EnumConstantDeclaration;
+
 import java.util.Optional;
 
 /**
@@ -38,13 +39,7 @@ public class EnumConstantDeclarationMetaModel extends BodyDeclarationMetaModel {
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
     EnumConstantDeclarationMetaModel(Optional<BaseNodeMetaModel> superBaseNodeMetaModel) {
-        super(
-                superBaseNodeMetaModel,
-                EnumConstantDeclaration.class,
-                "EnumConstantDeclaration",
-                "com.github.javaparser.ast.body",
-                false,
-                false);
+        super(superBaseNodeMetaModel, EnumConstantDeclaration.class, "EnumConstantDeclaration", "com.github.javaparser.ast.body", false, false);
     }
 
     public PropertyMetaModel argumentsPropertyMetaModel;

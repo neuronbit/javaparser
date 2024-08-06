@@ -18,6 +18,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
+
 package com.github.javaparser.resolution;
 
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
@@ -30,7 +31,7 @@ import com.github.javaparser.resolution.model.SymbolReference;
  * @author Federico Tomassetti
  */
 public interface TypeSolver {
-
+    
     String JAVA_LANG_OBJECT = Object.class.getCanonicalName();
 
     /**
@@ -80,4 +81,5 @@ public interface TypeSolver {
     default boolean hasType(String name) {
         return tryToSolveType(name).isSolved();
     }
+    
 }

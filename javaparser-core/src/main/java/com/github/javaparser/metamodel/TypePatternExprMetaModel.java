@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007-2010 Júlio Vilmar Gesser.
  * Copyright (C) 2011, 2013-2024 The JavaParser Team.
  *
  * This file is part of JavaParser.
@@ -20,9 +19,9 @@
  */
 package com.github.javaparser.metamodel;
 
-import com.github.javaparser.ast.Generated;
-import com.github.javaparser.ast.expr.TypePatternExpr;
 import java.util.Optional;
+import com.github.javaparser.ast.expr.TypePatternExpr;
+import com.github.javaparser.ast.Generated;
 
 /**
  * This file, class, and its contents are completely generated based on:
@@ -38,16 +37,12 @@ public class TypePatternExprMetaModel extends PatternExprMetaModel {
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
     TypePatternExprMetaModel(Optional<BaseNodeMetaModel> superBaseNodeMetaModel) {
-        super(
-                superBaseNodeMetaModel,
-                TypePatternExpr.class,
-                "TypePatternExpr",
-                "com.github.javaparser.ast.expr",
-                false,
-                false);
+        super(superBaseNodeMetaModel, TypePatternExpr.class, "TypePatternExpr", "com.github.javaparser.ast.expr", false, false);
     }
 
     public PropertyMetaModel modifiersPropertyMetaModel;
 
     public PropertyMetaModel namePropertyMetaModel;
+
+    public PropertyMetaModel typePropertyMetaModel;
 }

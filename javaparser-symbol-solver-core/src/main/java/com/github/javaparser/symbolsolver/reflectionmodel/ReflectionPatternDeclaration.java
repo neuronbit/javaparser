@@ -81,4 +81,5 @@ public class ReflectionPatternDeclaration implements ResolvedTypePatternDeclarat
     public ResolvedType getType() {
         return ReflectionFactory.typeUsageFor(type, typeSolver);
     }
+
 }

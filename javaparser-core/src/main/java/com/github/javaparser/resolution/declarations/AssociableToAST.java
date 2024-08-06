@@ -21,6 +21,7 @@
 package com.github.javaparser.resolution.declarations;
 
 import com.github.javaparser.ast.Node;
+
 import java.util.Optional;
 
 /**
@@ -65,6 +66,9 @@ public interface AssociableToAST {
      * @see AssociableToAST#toAst()
      */
     default <N extends Node> Optional<N> toAst(Class<N> clazz) {
-        return toAst().filter(clazz::isInstance).map(clazz::cast);
+        return toAst()
+                .filter(clazz::isInstance)
+                .map(clazz::cast);
     }
+
 }

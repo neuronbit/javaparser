@@ -21,7 +21,11 @@
 
 package com.github.javaparser.symbolsolver.javassistmodel;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 import com.github.javaparser.ast.AccessSpecifier;
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.TypeSolver;
@@ -36,19 +40,19 @@ import com.github.javaparser.symbolsolver.core.resolution.MethodUsageResolutionC
 import com.github.javaparser.symbolsolver.core.resolution.SymbolResolutionCapability;
 import com.github.javaparser.symbolsolver.logic.AbstractTypeDeclaration;
 import com.github.javaparser.symbolsolver.resolution.SymbolSolver;
-import java.util.*;
-import java.util.stream.Collectors;
+
 import javassist.CtClass;
 import javassist.CtField;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.annotation.Annotation;
 
 /**
  * @author Federico Tomassetti
  */
 public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
-        implements ResolvedInterfaceDeclaration,
-                MethodResolutionCapability,
-                MethodUsageResolutionCapability,
-                SymbolResolutionCapability {
+        implements ResolvedInterfaceDeclaration, MethodResolutionCapability, MethodUsageResolutionCapability,
+        SymbolResolutionCapability {
 
     private CtClass ctClass;
     private TypeSolver typeSolver;
@@ -56,7 +60,10 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
 
     @Override
     public String toString() {
-        return "JavassistInterfaceDeclaration{" + "ctClass=" + ctClass.getName() + ", typeSolver=" + typeSolver + '}';
+        return "JavassistInterfaceDeclaration{" +
+                "ctClass=" + ctClass.getName() +
+                ", typeSolver=" + typeSolver +
+                '}';
     }
 
     public JavassistInterfaceDeclaration(CtClass ctClass, TypeSolver typeSolver) {
@@ -93,26 +100,21 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
     }
 
     @Override
-    @Deprecated
-    public Optional<MethodUsage> solveMethodAsUsage(
-            String name,
-            List<ResolvedType> argumentsTypes,
-            Context invokationContext,
-            List<ResolvedType> typeParameterValues) {
-        return JavassistUtils.solveMethodAsUsage(
-                name, argumentsTypes, typeSolver, invokationContext, typeParameterValues, this, ctClass);
+	@Deprecated
+    public Optional<MethodUsage> solveMethodAsUsage(String name, List<ResolvedType> argumentsTypes,
+                                                    Context invokationContext, List<ResolvedType> typeParameterValues) {
+        return JavassistUtils.solveMethodAsUsage(name, argumentsTypes, typeSolver, invokationContext, typeParameterValues, this, ctClass);
     }
 
     @Override
     @Deprecated
-    public SymbolReference<ResolvedMethodDeclaration> solveMethod(
-            String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+    public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
         return JavassistUtils.solveMethod(name, argumentsTypes, staticOnly, typeSolver, this, ctClass);
     }
 
     @Override
     public List<ResolvedFieldDeclaration> getAllFields() {
-        return javassistTypeDeclarationAdapter.getDeclaredFields();
+      return javassistTypeDeclarationAdapter.getDeclaredFields();
     }
 
     @Override
@@ -127,7 +129,7 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
 
     @Override
     public boolean canBeAssignedTo(ResolvedReferenceTypeDeclaration other) {
-        if (other.isJavaLangObject()) {
+    	if (other.isJavaLangObject()) {
             // Everything can be assigned to {@code java.lang.Object}
             return true;
         }
@@ -139,19 +141,19 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
             return true;
         }
         Optional<ResolvedReferenceType> oSuperClass = javassistTypeDeclarationAdapter.getSuperClass();
-        if (oSuperClass.isPresent()) {
-            ResolvedReferenceType superClass = oSuperClass.get();
-            Optional<ResolvedReferenceTypeDeclaration> oDecl = superClass.getTypeDeclaration();
-            if (oDecl.isPresent() && oDecl.get().canBeAssignedTo(other)) {
-                return true;
-            }
-        }
-        for (ResolvedReferenceType interfaze : javassistTypeDeclarationAdapter.getInterfaces()) {
-            if (interfaze.getTypeDeclaration().isPresent()
-                    && interfaze.getTypeDeclaration().get().canBeAssignedTo(other)) {
-                return true;
-            }
-        }
+		if (oSuperClass.isPresent()) {
+			ResolvedReferenceType superClass = oSuperClass.get();
+			Optional<ResolvedReferenceTypeDeclaration> oDecl = superClass.getTypeDeclaration();
+			if (oDecl.isPresent() && oDecl.get().canBeAssignedTo(other)) {
+				return true;
+			}
+		}
+		for (ResolvedReferenceType interfaze : javassistTypeDeclarationAdapter.getInterfaces()) {
+			if (interfaze.getTypeDeclaration().isPresent()
+					&& interfaze.getTypeDeclaration().get().canBeAssignedTo(other)) {
+				return true;
+			}
+		}
 
         return false;
     }
@@ -250,10 +252,10 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
         The name of the ReferenceTypeDeclaration could be composed on the internal class and the outer class, e.g. A$B. That's why we search the internal type in the ending part.
         In case the name is composed of the internal type only, i.e. f.getName() returns B, it will also works.
          */
-        Optional<ResolvedReferenceTypeDeclaration> type = this.internalTypes().stream()
-                .filter(f -> f.getName().endsWith(name))
-                .findFirst();
-        return type.orElseThrow(() -> new UnsolvedSymbolException("Internal type not found: " + name));
+        Optional<ResolvedReferenceTypeDeclaration> type =
+                this.internalTypes().stream().filter(f -> f.getName().endsWith(name)).findFirst();
+        return type.orElseThrow(() ->
+                new UnsolvedSymbolException("Internal type not found: " + name));
     }
 
     @Override
@@ -268,5 +270,68 @@ public class JavassistInterfaceDeclaration extends AbstractTypeDeclaration
     @Override
     public List<ResolvedConstructorDeclaration> getConstructors() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<ResolvedAnnotationExpr> getAnnotations() {
+        List<ResolvedAnnotationExpr> result = new ArrayList<>(3);
+        AnnotationsAttribute visibleAnnoAttr = (AnnotationsAttribute) ctClass.getClassFile2().getAttribute(AnnotationsAttribute.visibleTag);
+        if (null != visibleAnnoAttr) {
+            Annotation[] an = visibleAnnoAttr.getAnnotations();
+            if (null != an) {
+                for (Annotation annotation : an) {
+                    result.add(new JavassistResolvedAnnotationExpr(annotation));
+                }
+            }
+        }
+        AnnotationsAttribute inVisibleAnnoAttr = (AnnotationsAttribute) ctClass.getClassFile2().getAttribute(AnnotationsAttribute.invisibleTag);
+        if (null != inVisibleAnnoAttr) {
+            Annotation[] an = inVisibleAnnoAttr.getAnnotations();
+            if (null != an) {
+                for (Annotation annotation : an) {
+                    result.add(new JavassistResolvedAnnotationExpr(annotation));
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        List<ResolvedAnnotationExpr> result = new ArrayList<>(3);
+        ClassFile classFile2 = ctClass.getClassFile2();
+        AnnotationsAttribute visibleAttr = (AnnotationsAttribute) classFile2.getAttribute(AnnotationsAttribute.visibleTag);
+        if (null != visibleAttr) {
+            Annotation[] an = visibleAttr.getAnnotations();
+            if (null != an) {
+                for (Annotation annotation : an) {
+                    if (ResolvedDeclaration.isMatch(typeName, annotation.getTypeName())) {
+                        result.add(new JavassistResolvedAnnotationExpr(annotation));
+                    }
+                }
+            }
+        }
+        AnnotationsAttribute inVisibleAttr = (AnnotationsAttribute) classFile2.getAttribute(AnnotationsAttribute.invisibleTag);
+        if (null != inVisibleAttr) {
+            Annotation[] an = inVisibleAttr.getAnnotations();
+            if (null != an) {
+                for (Annotation annotation : an) {
+                    if (ResolvedDeclaration.isMatch(typeName, annotation.getTypeName())) {
+                        result.add(new JavassistResolvedAnnotationExpr(annotation));
+                    }
+                }
+            }
+        }
+        return Optional.of(result);
+    }
+
+    @Override
+    public boolean setJavadoc(Javadoc javadoc) {
+        return false;
     }
 }

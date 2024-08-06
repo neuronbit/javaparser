@@ -27,6 +27,7 @@ import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.declarations.ResolvedTypePatternDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
+
 import java.util.Optional;
 
 /**
@@ -67,4 +68,5 @@ public class JavaParserTypePatternDeclaration implements ResolvedTypePatternDecl
     public Optional<Node> toAst() {
         return Optional.of(wrappedNode);
     }
+
 }

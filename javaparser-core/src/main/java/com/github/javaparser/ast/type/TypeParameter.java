@@ -20,9 +20,6 @@
  */
 package com.github.javaparser.ast.type;
 
-import static com.github.javaparser.utils.Utils.assertNotNull;
-import static java.util.stream.Collectors.joining;
-
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Generated;
@@ -41,8 +38,12 @@ import com.github.javaparser.metamodel.TypeParameterMetaModel;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.resolution.types.ResolvedTypeVariable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static com.github.javaparser.utils.Utils.assertNotNull;
+import static java.util.stream.Collectors.joining;
 
 /**
  * A type parameter. Examples:
@@ -56,8 +57,7 @@ import java.util.function.Consumer;
  * @author Julio Vilmar Gesser
  * @see com.github.javaparser.ast.nodeTypes.NodeWithTypeParameters
  */
-public class TypeParameter extends ReferenceType
-        implements NodeWithSimpleName<TypeParameter>, NodeWithAnnotations<TypeParameter> {
+public class TypeParameter extends ReferenceType implements NodeWithSimpleName<TypeParameter>, NodeWithAnnotations<TypeParameter> {
 
     private SimpleName name;
 
@@ -76,8 +76,7 @@ public class TypeParameter extends ReferenceType
     }
 
     @AllFieldsConstructor
-    public TypeParameter(
-            SimpleName name, NodeList<ClassOrInterfaceType> typeBound, NodeList<AnnotationExpr> annotations) {
+    public TypeParameter(SimpleName name, NodeList<ClassOrInterfaceType> typeBound, NodeList<AnnotationExpr> annotations) {
         this(null, name, typeBound, annotations);
     }
 
@@ -85,11 +84,7 @@ public class TypeParameter extends ReferenceType
      * This constructor is used by the parser and is considered private.
      */
     @Generated("com.github.javaparser.generator.core.node.MainConstructorGenerator")
-    public TypeParameter(
-            TokenRange tokenRange,
-            SimpleName name,
-            NodeList<ClassOrInterfaceType> typeBound,
-            NodeList<AnnotationExpr> annotations) {
+    public TypeParameter(TokenRange tokenRange, SimpleName name, NodeList<ClassOrInterfaceType> typeBound, NodeList<AnnotationExpr> annotations) {
         super(tokenRange, annotations);
         setName(name);
         setTypeBound(typeBound);
@@ -136,7 +131,8 @@ public class TypeParameter extends ReferenceType
             return this;
         }
         notifyPropertyChange(ObservableProperty.NAME, this.name, name);
-        if (this.name != null) this.name.setParentNode(null);
+        if (this.name != null)
+            this.name.setParentNode(null);
         this.name = name;
         setAsParentNodeOf(name);
         return this;
@@ -149,7 +145,8 @@ public class TypeParameter extends ReferenceType
             return this;
         }
         notifyPropertyChange(ObservableProperty.TYPE_BOUND, this.typeBound, typeBound);
-        if (this.typeBound != null) this.typeBound.setParentNode(null);
+        if (this.typeBound != null)
+            this.typeBound.setParentNode(null);
         this.typeBound = typeBound;
         setAsParentNodeOf(typeBound);
         return this;
@@ -179,9 +176,7 @@ public class TypeParameter extends ReferenceType
     @Override
     public String asString() {
         StringBuilder str = new StringBuilder(getNameAsString());
-        getTypeBound()
-                .ifNonEmpty(l -> str.append(
-                        l.stream().map(ClassOrInterfaceType::asString).collect(joining("&", " extends ", ""))));
+        getTypeBound().ifNonEmpty(l -> str.append(l.stream().map(ClassOrInterfaceType::asString).collect(joining("&", " extends ", ""))));
         return str.toString();
     }
 
@@ -250,8 +245,8 @@ public class TypeParameter extends ReferenceType
         return Optional.of(this);
     }
 
-    @Override
-    public ResolvedType convertToUsage(Context context) {
-        throw new UnsupportedOperationException(getClass().getCanonicalName());
-    }
+	@Override
+	public ResolvedType convertToUsage(Context context) {
+		throw new UnsupportedOperationException(getClass().getCanonicalName());
+	}
 }

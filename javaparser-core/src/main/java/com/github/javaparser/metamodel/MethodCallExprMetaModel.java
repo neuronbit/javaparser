@@ -22,6 +22,7 @@ package com.github.javaparser.metamodel;
 
 import com.github.javaparser.ast.Generated;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+
 import java.util.Optional;
 
 /**
@@ -38,13 +39,7 @@ public class MethodCallExprMetaModel extends ExpressionMetaModel {
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
     MethodCallExprMetaModel(Optional<BaseNodeMetaModel> superBaseNodeMetaModel) {
-        super(
-                superBaseNodeMetaModel,
-                MethodCallExpr.class,
-                "MethodCallExpr",
-                "com.github.javaparser.ast.expr",
-                false,
-                false);
+        super(superBaseNodeMetaModel, MethodCallExpr.class, "MethodCallExpr", "com.github.javaparser.ast.expr", false, false);
     }
 
     public PropertyMetaModel argumentsPropertyMetaModel;

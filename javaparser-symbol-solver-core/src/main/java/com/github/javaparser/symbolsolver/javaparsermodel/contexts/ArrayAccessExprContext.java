@@ -93,4 +93,5 @@ public class ArrayAccessExprContext extends AbstractJavaParserContext<ArrayAcces
          */
         return super.solveSymbolInParentContext(name);
     }
+
 }

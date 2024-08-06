@@ -22,21 +22,23 @@
 package com.github.javaparser.symbolsolver.reflectionmodel;
 
 import com.github.javaparser.ast.AccessSpecifier;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.TypeSolver;
-import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedParameterDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
+import com.github.javaparser.resolution.declarations.*;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.core.resolution.TypeVariableResolutionCapability;
 import com.github.javaparser.symbolsolver.declarations.common.MethodDeclarationCommonLogic;
 import com.github.javaparser.utils.TypeUtils;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -72,7 +74,9 @@ public class ReflectionMethodDeclaration implements ResolvedMethodDeclaration, T
 
     @Override
     public String toString() {
-        return "ReflectionMethodDeclaration{" + "method=" + method + '}';
+        return "ReflectionMethodDeclaration{" +
+                "method=" + method +
+                '}';
     }
 
     @Override
@@ -107,19 +111,13 @@ public class ReflectionMethodDeclaration implements ResolvedMethodDeclaration, T
         if (method.isVarArgs()) {
             variadic = i == (method.getParameterCount() - 1);
         }
-        return new ReflectionParameterDeclaration(
-                method.getParameterTypes()[i],
-                method.getGenericParameterTypes()[i],
-                typeSolver,
-                variadic,
-                method.getParameters()[i].getName());
+        return new ReflectionParameterDeclaration(method.getParameterTypes()[i], method.getGenericParameterTypes()[i],
+                typeSolver, variadic, method.getParameters()[i].getName(), method.getParameters()[i].getAnnotations());
     }
 
     @Override
     public List<ResolvedTypeParameterDeclaration> getTypeParameters() {
-        return Arrays.stream(method.getTypeParameters())
-                .map((refTp) -> new ReflectionTypeParameter(refTp, false, typeSolver))
-                .collect(Collectors.toList());
+        return Arrays.stream(method.getTypeParameters()).map((refTp) -> new ReflectionTypeParameter(refTp, false, typeSolver)).collect(Collectors.toList());
     }
 
     public MethodUsage resolveTypeVariables(Context context, List<ResolvedType> parameterTypes) {
@@ -129,6 +127,11 @@ public class ReflectionMethodDeclaration implements ResolvedMethodDeclaration, T
     @Override
     public boolean isAbstract() {
         return Modifier.isAbstract(method.getModifiers());
+    }
+
+    @Override
+    public Optional<Node> getParentNode() {
+        return Optional.empty();
     }
 
     @Override
@@ -162,5 +165,56 @@ public class ReflectionMethodDeclaration implements ResolvedMethodDeclaration, T
     @Override
     public String toDescriptor() {
         return TypeUtils.getMethodDescriptor(method);
+    }
+
+    @Override
+    public boolean hasAnnotation(String typeName) {
+        if (typeName.contains(".")) {
+            String simpleName = typeName.substring(typeName.lastIndexOf('.') + 1);
+            return Arrays.stream(this.method.getAnnotations()).anyMatch(a -> a.annotationType().getName().equals(simpleName) || a.annotationType().getCanonicalName().equals(typeName));
+        } else {
+            return Arrays.stream(this.method.getAnnotations()).anyMatch(a -> a.annotationType().getName().equals(typeName));
+        }
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        if (typeName.contains(".")) {
+            String simpleName = typeName.substring(typeName.lastIndexOf('.') + 1);
+            return Optional.of(Arrays.stream(this.method.getAnnotations())
+                    .filter(a -> a.annotationType().getName().equals(simpleName) || a.annotationType().getCanonicalName().equals(typeName))
+                    .map(ReflectionResolvedAnnotationExpr::new)
+                    .collect(Collectors.toList()));
+        } else {
+            return Optional.of(Arrays.stream(this.method.getAnnotations())
+                    .filter(a -> a.annotationType().getName().equals(typeName))
+                    .map(ReflectionResolvedAnnotationExpr::new)
+                    .collect(Collectors.toList()));
+        }
+    }
+
+    @Override
+    public Optional<JavadocComment> getJavadocComment() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return Optional.empty();
+    }
+
+    @Override
+    public int getStartLineNumber() {
+        return -1;
+    }
+
+    @Override
+    public boolean isPublic() {
+        return Modifier.isPublic(this.method.getModifiers());
+    }
+
+    @Override
+    public boolean setJavadoc(Javadoc javadoc) {
+        return false;
     }
 }

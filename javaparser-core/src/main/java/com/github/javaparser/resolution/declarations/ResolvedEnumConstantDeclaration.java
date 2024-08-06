@@ -20,6 +20,11 @@
  */
 package com.github.javaparser.resolution.declarations;
 
+import com.github.javaparser.javadoc.Javadoc;
+
+import java.util.List;
+import java.util.Optional;
+
 /**
  * @author Federico Tomassetti
  */
@@ -36,4 +41,8 @@ public interface ResolvedEnumConstantDeclaration extends ResolvedValueDeclaratio
     default ResolvedEnumConstantDeclaration asEnumConstant() {
         return this;
     }
+
+    Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName);
+
+    Optional<Javadoc> getJavadoc();
 }

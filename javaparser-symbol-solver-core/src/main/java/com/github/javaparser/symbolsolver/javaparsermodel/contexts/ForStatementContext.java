@@ -21,8 +21,6 @@
 
 package com.github.javaparser.symbolsolver.javaparsermodel.contexts;
 
-import static com.github.javaparser.resolution.Navigator.demandParentNode;
-
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.*;
@@ -34,8 +32,11 @@ import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserSymbolDeclaration;
+
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.github.javaparser.resolution.Navigator.demandParentNode;
 
 public class ForStatementContext extends AbstractJavaParserContext<ForStmt> {
 
@@ -50,13 +51,10 @@ public class ForStatementContext extends AbstractJavaParserContext<ForStmt> {
                 VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) expression;
                 for (VariableDeclarator variableDeclarator : variableDeclarationExpr.getVariables()) {
                     if (variableDeclarator.getName().getId().equals(name)) {
-                        return SymbolReference.solved(
-                                JavaParserSymbolDeclaration.localVar(variableDeclarator, typeSolver));
+                        return SymbolReference.solved(JavaParserSymbolDeclaration.localVar(variableDeclarator, typeSolver));
                     }
                 }
-            } else if (!(expression instanceof AssignExpr
-                    || expression instanceof MethodCallExpr
-                    || expression instanceof UnaryExpr)) {
+            } else if (!(expression instanceof AssignExpr || expression instanceof MethodCallExpr || expression instanceof UnaryExpr)) {
                 throw new UnsupportedOperationException(expression.getClass().getCanonicalName());
             }
         }
@@ -68,8 +66,7 @@ public class ForStatementContext extends AbstractJavaParserContext<ForStmt> {
     }
 
     @Override
-    public SymbolReference<ResolvedMethodDeclaration> solveMethod(
-            String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+    public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
         // TODO: Document why staticOnly is forced to be false.
         return solveMethodInParentContext(name, argumentsTypes, false);
     }

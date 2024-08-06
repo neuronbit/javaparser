@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 
 class UtilsTest {
@@ -42,7 +43,8 @@ class UtilsTest {
         assertTrue(isNullOrEmpty(null));
         assertTrue(isNullOrEmpty(new ArrayList<>()));
 
-        assertFalse(isNullOrEmpty(new ArrayList<>(Arrays.asList("foo", "bar"))));
+        assertFalse(isNullOrEmpty(
+                new ArrayList<>(Arrays.asList("foo", "bar"))));
     }
 
     @Test
@@ -56,6 +58,7 @@ class UtilsTest {
         assertEquals("foo", assertNonEmpty("foo"));
         assertThrows(AssertionError.class, () -> assertNonEmpty(""));
         assertThrows(AssertionError.class, () -> assertNonEmpty(null));
+
     }
 
     @Test
@@ -84,7 +87,8 @@ class UtilsTest {
             }
 
             @Override
-            public void close() throws IOException {}
+            public void close() throws IOException {
+            }
         };
         assertEquals("", readerToString(reader));
     }
@@ -121,10 +125,14 @@ class UtilsTest {
 
     @Test
     void testIndent() {
-        assertEquals("foo", indent(new StringBuilder("foo"), 0).toString());
-        assertEquals("foo\t", indent(new StringBuilder("foo"), 1).toString());
-        assertEquals("foo\t\t", indent(new StringBuilder("foo"), 2).toString());
-        assertEquals("foo\t\t\t", indent(new StringBuilder("foo"), 3).toString());
+        assertEquals("foo",
+                indent(new StringBuilder("foo"), 0).toString());
+        assertEquals("foo\t",
+                indent(new StringBuilder("foo"), 1).toString());
+        assertEquals("foo\t\t",
+                indent(new StringBuilder("foo"), 2).toString());
+        assertEquals("foo\t\t\t",
+                indent(new StringBuilder("foo"), 3).toString());
     }
 
     @Test
@@ -163,30 +171,38 @@ class UtilsTest {
         assertTrue(valueIsNullOrEmpty(Optional.empty()));
         assertTrue(valueIsNullOrEmpty(new ArrayList<>()));
 
-        assertFalse(valueIsNullOrEmpty(Optional.ofNullable("foo")));
-        assertFalse(valueIsNullOrEmpty(new ArrayList<>(Arrays.asList("foo", "bar"))));
+        assertFalse(valueIsNullOrEmpty(
+                Optional.ofNullable("foo")));
+        assertFalse(valueIsNullOrEmpty(
+                new ArrayList<>(Arrays.asList("foo", "bar"))));
     }
 
     @Test
     void testValueIsNullOrEmptyStringOrOptional() {
         assertTrue(valueIsNullOrEmptyStringOrOptional(null));
-        assertTrue(valueIsNullOrEmptyStringOrOptional(Optional.empty()));
+        assertTrue(valueIsNullOrEmptyStringOrOptional(
+                Optional.empty()));
 
         assertFalse(valueIsNullOrEmptyStringOrOptional("foo"));
         assertFalse(valueIsNullOrEmptyStringOrOptional(""));
-        assertFalse(valueIsNullOrEmptyStringOrOptional(Optional.ofNullable("foo")));
-        assertFalse(valueIsNullOrEmptyStringOrOptional(Optional.ofNullable("")));
+        assertFalse(valueIsNullOrEmptyStringOrOptional(
+                Optional.ofNullable("foo")));
+        assertFalse(valueIsNullOrEmptyStringOrOptional(
+                Optional.ofNullable("")));
     }
 
     @Test
     void testIndexOfElementByObjectIdentity() {
-        assertEquals(-1, indexOfElementByObjectIdentity(new ArrayList<>(), "bar"));
-        assertEquals(1, indexOfElementByObjectIdentity(new ArrayList<>(Arrays.asList("foo", "bar")), "bar"));
+        assertEquals(-1, indexOfElementByObjectIdentity(
+                new ArrayList<>(), "bar"));
+        assertEquals(1, indexOfElementByObjectIdentity(
+                new ArrayList<>(Arrays.asList("foo", "bar")), "bar"));
     }
 
     @Test
     void testSet() {
-        assertEquals(new HashSet<>(Arrays.asList("bar", "foo", "baz")), set("foo", "bar", "baz"));
+        assertEquals(new HashSet<>(Arrays.asList("bar", "foo", "baz")),
+                set("foo", "bar", "baz"));
     }
 
     @Test

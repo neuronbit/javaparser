@@ -21,9 +21,6 @@
 
 package com.github.javaparser.symbolsolver.resolution;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
@@ -50,6 +47,9 @@ import com.github.javaparser.utils.Log;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class MethodsResolutionTest extends AbstractResolutionTest {
 
     @AfterEach
@@ -71,8 +71,7 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         ForStmt outerFor = (ForStmt) methodDeclaration.getBody().get().getStatement(0);
         ForStmt innerFor = (ForStmt) ((BlockStmt) outerFor.getBody()).getStatement(0);
         IfStmt ifStmt = (IfStmt) ((BlockStmt) innerFor.getBody()).getStatement(4);
-        MethodCallExpr assertCall =
-                (MethodCallExpr) ((ExpressionStmt) ((BlockStmt) ifStmt.getThenStmt()).getStatement(0)).getExpression();
+        MethodCallExpr assertCall = (MethodCallExpr) ((ExpressionStmt) ((BlockStmt) ifStmt.getThenStmt()).getStatement(0)).getExpression();
         MethodCallExpr formatCall = (MethodCallExpr) assertCall.getArguments().get(0);
 
         boolean exception1, exception2, exception3, exception4;
@@ -112,11 +111,9 @@ class MethodsResolutionTest extends AbstractResolutionTest {
     @Test
     void solveMethodAccessThroughSuper() {
         CompilationUnit cu = parseSample("AccessThroughSuper");
-        com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz =
-                Navigator.demandClass(cu, "AccessThroughSuper.SubClass");
+        com.github.javaparser.ast.body.ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "AccessThroughSuper.SubClass");
         MethodDeclaration method = Navigator.demandMethod(clazz, "methodTest");
-        ReturnStmt returnStmt =
-                (ReturnStmt) method.getBody().get().getStatements().get(0);
+        ReturnStmt returnStmt = (ReturnStmt) method.getBody().get().getStatements().get(0);
         Expression expression = returnStmt.getExpression().get();
 
         ResolvedType ref = JavaParserFacade.get(new ReflectionTypeSolver()).getType(expression);
@@ -127,22 +124,20 @@ class MethodsResolutionTest extends AbstractResolutionTest {
     void testSuperMethodCallAnonymousClass() {
         JavaParser parser = new JavaParser();
         parser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
-        CompilationUnit cu = parser.parse("" + "public class X { \n"
-                        + "    java.util.List x() { \n"
-                        + "        return new java.util.ArrayList() { \n"
-                        + "            public int size() { \n"
-                        + "                return super.size(); \n"
-                        + "            } \n"
-                        + "        }; \n"
-                        + "    } \n"
-                        + "}"
-                        + "")
-                .getResult()
-                .get();
+        CompilationUnit cu = parser.parse("" +
+                "public class X { \n" +
+                "    java.util.List x() { \n" +
+                "        return new java.util.ArrayList() { \n" +
+                "            public int size() { \n" +
+                "                return super.size(); \n" +
+                "            } \n" +
+                "        }; \n" +
+                "    } \n" +
+                "}" +
+                "").getResult().get();
 
         MethodCallExpr expression = Navigator.findMethodCall(cu, "size").get();
-        MethodUsage methodUsage =
-                JavaParserFacade.get(new ReflectionTypeSolver()).solveMethodAsUsage(expression);
+        MethodUsage methodUsage = JavaParserFacade.get(new ReflectionTypeSolver()).solveMethodAsUsage(expression);
         assertEquals("size", methodUsage.getName());
     }
 
@@ -150,23 +145,21 @@ class MethodsResolutionTest extends AbstractResolutionTest {
     void testSuperMethodCallDefaultMethod() {
         JavaParser parser = new JavaParser();
         parser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(new ReflectionTypeSolver()));
-        CompilationUnit cu = parser.parse("" + "public class X { \n"
-                        + "    public interface Y { \n"
-                        + "        default void foo() {} \n"
-                        + "    } \n"
-                        + "    public class Z implements Y { \n"
-                        + "        public void foo() { \n"
-                        + "            Y.super.foo(); \n"
-                        + "        } \n"
-                        + "    } \n"
-                        + "}"
-                        + "")
-                .getResult()
-                .get();
+        CompilationUnit cu = parser.parse("" +
+                "public class X { \n" +
+                "    public interface Y { \n" +
+                "        default void foo() {} \n" +
+                "    } \n" +
+                "    public class Z implements Y { \n" +
+                "        public void foo() { \n" +
+                "            Y.super.foo(); \n" +
+                "        } \n" +
+                "    } \n" +
+                "}" +
+                "").getResult().get();
 
         MethodCallExpr expression = Navigator.findMethodCall(cu, "foo").get();
-        MethodUsage methodUsage =
-                JavaParserFacade.get(new ReflectionTypeSolver()).solveMethodAsUsage(expression);
+        MethodUsage methodUsage = JavaParserFacade.get(new ReflectionTypeSolver()).solveMethodAsUsage(expression);
         assertEquals("foo", methodUsage.getName());
     }
 
@@ -177,8 +170,7 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         MethodDeclaration method = Navigator.demandMethod(clazz, "foo");
         MethodCallExpr expression = Navigator.findMethodCall(method, "noneOf").get();
 
-        MethodUsage methodUsage =
-                JavaParserFacade.get(new ReflectionTypeSolver()).solveMethodAsUsage(expression);
+        MethodUsage methodUsage = JavaParserFacade.get(new ReflectionTypeSolver()).solveMethodAsUsage(expression);
         assertEquals("noneOf", methodUsage.getName());
     }
 
@@ -205,57 +197,30 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         MethodDeclaration method = Navigator.demandMethod(clazz, "callingLong");
 
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(0)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(0).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("longParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(1)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(1).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("longParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(2)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(2).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("longParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(3)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(3).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("longParam", reference.getCorrespondingDeclaration().getName());
         }
+
     }
 
     @Test
@@ -266,56 +231,29 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         MethodDeclaration method = Navigator.demandMethod(clazz, "callingInt");
 
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(0)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(0).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("intParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(1)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(1).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("intParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(2)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(2).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("intParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(3)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(3).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
+
     }
 
     @Test
@@ -326,55 +264,28 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         MethodDeclaration method = Navigator.demandMethod(clazz, "callingShort");
 
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(0)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(0).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("shortParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(1)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(1).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("shortParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(2)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(2).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(3)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(3).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
+
     }
 
     @Test
@@ -385,54 +296,27 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         MethodDeclaration method = Navigator.demandMethod(clazz, "callingByte");
 
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(0)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(0).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("byteParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(1)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(1).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(2)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(2).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(3)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(3).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
+
     }
 
     @Test
@@ -443,57 +327,30 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         MethodDeclaration method = Navigator.demandMethod(clazz, "callingLong");
 
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(0)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(0).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("longParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(1)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(1).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("longParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(2)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(2).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("longParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(3)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(3).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("longParam", reference.getCorrespondingDeclaration().getName());
         }
+
     }
 
     @Test
@@ -504,56 +361,29 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         MethodDeclaration method = Navigator.demandMethod(clazz, "callingInt");
 
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(0)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(0).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("intParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(1)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(1).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("intParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(2)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(2).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("intParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(3)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(3).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
+
     }
 
     @Test
@@ -564,55 +394,28 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         MethodDeclaration method = Navigator.demandMethod(clazz, "callingShort");
 
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(0)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(0).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("shortParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(1)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(1).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("shortParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(2)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(2).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(3)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(3).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
+
     }
 
     @Test
@@ -623,54 +426,27 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         MethodDeclaration method = Navigator.demandMethod(clazz, "callingByte");
 
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(0)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(0).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(true, reference.isSolved());
             assertEquals("byteParam", reference.getCorrespondingDeclaration().getName());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(1)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(1).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(2)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(2).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
         {
-            MethodCallExpr expression = method.getBody()
-                    .get()
-                    .getStatements()
-                    .get(3)
-                    .asExpressionStmt()
-                    .getExpression()
-                    .asMethodCallExpr();
-            SymbolReference<ResolvedMethodDeclaration> reference =
-                    JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
+            MethodCallExpr expression = method.getBody().get().getStatements().get(3).asExpressionStmt().getExpression().asMethodCallExpr();
+            SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(expression);
             assertEquals(false, reference.isSolved());
         }
+
     }
 
     @Test
@@ -680,8 +456,7 @@ class MethodsResolutionTest extends AbstractResolutionTest {
 
         MethodCallExpr fooCall = Navigator.findMethodCall(clazz, "foo").get();
 
-        SymbolReference<ResolvedMethodDeclaration> reference =
-                JavaParserFacade.get(new ReflectionTypeSolver()).solve(fooCall);
+        SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(fooCall);
         assertEquals(true, reference.isSolved());
     }
 
@@ -694,8 +469,7 @@ class MethodsResolutionTest extends AbstractResolutionTest {
 
         ResolvedType type = JavaParserFacade.get(new ReflectionTypeSolver()).getType(thisExpression);
         assertEquals(true, type.isReferenceType());
-        assertEquals(
-                true, type.asReferenceType().getTypeDeclaration().get() instanceof JavaParserAnonymousClassDeclaration);
+        assertEquals(true, type.asReferenceType().getTypeDeclaration().get() instanceof JavaParserAnonymousClassDeclaration);
     }
 
     @Test
@@ -705,25 +479,16 @@ class MethodsResolutionTest extends AbstractResolutionTest {
 
         MethodDeclaration method = Navigator.demandMethod(clazz, "foo");
 
-        MethodCallExpr callExpr = method.getBody()
-                .get()
-                .getStatement(1)
-                .asSwitchStmt()
-                .getEntry(0)
-                .getStatement(1)
-                .asTryStmt()
-                .getTryBlock()
-                .getStatement(1)
-                .asExpressionStmt()
-                .getExpression()
+        MethodCallExpr callExpr = method.getBody().get().getStatement(1)
+                .asSwitchStmt().getEntry(0).getStatement(1)
+                .asTryStmt().getTryBlock().getStatement(1)
+                .asExpressionStmt().getExpression()
                 .asMethodCallExpr();
 
-        SymbolReference<ResolvedMethodDeclaration> reference =
-                JavaParserFacade.get(new ReflectionTypeSolver()).solve(callExpr);
+        SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver()).solve(callExpr);
 
         assertTrue(reference.isSolved());
-        assertEquals(
-                "java.io.File.delete()", reference.getCorrespondingDeclaration().getQualifiedSignature());
+        assertEquals("java.io.File.delete()", reference.getCorrespondingDeclaration().getQualifiedSignature());
     }
 
     @Test
@@ -732,12 +497,12 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         ClassOrInterfaceDeclaration mainClass = Navigator.demandClass(cu, "Main");
 
         ClassOrInterfaceDeclaration childDec = (ClassOrInterfaceDeclaration) mainClass.getMember(1);
-        ExpressionStmt stmt = (ExpressionStmt)
-                Navigator.demandMethod(childDec, "foo").getBody().get().getStatement(0);
-        ReferenceTypeImpl resolvedType = (ReferenceTypeImpl)
-                JavaParserFacade.get(new ReflectionTypeSolver()).getType(stmt.getExpression());
-        ClassOrInterfaceDeclaration resolvedTypeDeclaration =
-                ((JavaParserClassDeclaration) resolvedType.getTypeDeclaration().get()).getWrappedNode();
+        ExpressionStmt stmt =
+                (ExpressionStmt) Navigator.demandMethod(childDec, "foo").getBody().get().getStatement(0);
+        ReferenceTypeImpl resolvedType =
+                (ReferenceTypeImpl) JavaParserFacade.get(new ReflectionTypeSolver()).getType(stmt.getExpression());
+        ClassOrInterfaceDeclaration resolvedTypeDeclaration
+                = ((JavaParserClassDeclaration) resolvedType.getTypeDeclaration().get()).getWrappedNode();
 
         assertEquals(mainClass, resolvedTypeDeclaration.getParentNode().get());
     }
@@ -749,15 +514,11 @@ class MethodsResolutionTest extends AbstractResolutionTest {
 
         MethodDeclaration method = Navigator.demandMethod(classA, "foo");
 
-        MethodCallExpr callExpr = method.getBody()
-                .get()
-                .getStatement(1)
-                .asExpressionStmt()
-                .getExpression()
-                .asMethodCallExpr();
+        MethodCallExpr callExpr = method.getBody().get().getStatement(1)
+                .asExpressionStmt().getExpression().asMethodCallExpr();
 
-        SymbolReference<ResolvedMethodDeclaration> reference =
-                JavaParserFacade.get(new ReflectionTypeSolver()).solve(callExpr);
+        SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver())
+                .solve(callExpr);
 
         assertTrue(reference.isSolved());
         assertEquals("X.Y.bar()", reference.getCorrespondingDeclaration().getQualifiedSignature());
@@ -770,15 +531,11 @@ class MethodsResolutionTest extends AbstractResolutionTest {
 
         MethodDeclaration method = Navigator.demandMethod(classA, "foo");
 
-        MethodCallExpr callExpr = method.getBody()
-                .get()
-                .getStatement(1)
-                .asExpressionStmt()
-                .getExpression()
-                .asMethodCallExpr();
+        MethodCallExpr callExpr = method.getBody().get().getStatement(1)
+                .asExpressionStmt().getExpression().asMethodCallExpr();
 
-        SymbolReference<ResolvedMethodDeclaration> reference =
-                JavaParserFacade.get(new ReflectionTypeSolver()).solve(callExpr);
+        SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver())
+                .solve(callExpr);
 
         assertTrue(reference.isSolved());
         assertEquals("X.Y.bar()", reference.getCorrespondingDeclaration().getQualifiedSignature());
@@ -791,15 +548,11 @@ class MethodsResolutionTest extends AbstractResolutionTest {
 
         MethodDeclaration method = Navigator.demandMethod(classA, "foo");
 
-        MethodCallExpr callExpr = method.getBody()
-                .get()
-                .getStatement(1)
-                .asExpressionStmt()
-                .getExpression()
-                .asMethodCallExpr();
+        MethodCallExpr callExpr = method.getBody().get().getStatement(1)
+                .asExpressionStmt().getExpression().asMethodCallExpr();
 
-        SymbolReference<ResolvedMethodDeclaration> reference =
-                JavaParserFacade.get(new ReflectionTypeSolver()).solve(callExpr);
+        SymbolReference<ResolvedMethodDeclaration> reference = JavaParserFacade.get(new ReflectionTypeSolver())
+                .solve(callExpr);
 
         assertTrue(reference.isSolved());
         assertEquals("X.A.bar()", reference.getCorrespondingDeclaration().getQualifiedSignature());
@@ -814,20 +567,14 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         CompilationUnit cu = parseSample("ClassExtendingUnknownClass");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "ClassExtendingUnknownClass");
         MethodDeclaration method = Navigator.demandMethod(clazz, "foo");
-        MethodCallExpr methodCallExpr = method.getBody()
-                .get()
-                .getStatements()
-                .get(0)
-                .asExpressionStmt()
-                .getExpression()
-                .asMethodCallExpr();
+        MethodCallExpr methodCallExpr = method.getBody().get().getStatements().get(0).asExpressionStmt()
+                .getExpression().asMethodCallExpr();
 
         // resolve field access expression
         ResolvedMethodDeclaration resolvedMethodDeclaration = methodCallExpr.resolve();
 
         // check that the expected method declaration equals the resolved method declaration
-        assertEquals(
-                "ClassExtendingUnknownClass.bar(java.lang.String)", resolvedMethodDeclaration.getQualifiedSignature());
+        assertEquals("ClassExtendingUnknownClass.bar(java.lang.String)", resolvedMethodDeclaration.getQualifiedSignature());
     }
 
     @Test
@@ -839,21 +586,13 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         CompilationUnit cu = parseSample("OverloadedMethods");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "OverloadedMethods");
         MethodDeclaration testingMethod = Navigator.demandMethod(clazz, "testComplex1");
-        MethodCallExpr methodCallExpr = testingMethod
-                .getBody()
-                .get()
-                .getStatements()
-                .get(0)
-                .asExpressionStmt()
-                .getExpression()
-                .asMethodCallExpr();
+        MethodCallExpr methodCallExpr = testingMethod.getBody().get().getStatements().get(0).asExpressionStmt()
+                .getExpression().asMethodCallExpr();
 
         // resolve method call expression
         ResolvedMethodDeclaration resolvedMethodDeclaration = methodCallExpr.resolve();
 
-        assertEquals(
-                "OverloadedMethods.complexOverloading1(java.lang.String, java.lang.String)",
-                resolvedMethodDeclaration.getQualifiedSignature());
+        assertEquals("OverloadedMethods.complexOverloading1(java.lang.String, java.lang.String)", resolvedMethodDeclaration.getQualifiedSignature());
     }
 
     @Test
@@ -865,21 +604,13 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         CompilationUnit cu = parseSample("OverloadedMethods");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "OverloadedMethods");
         MethodDeclaration testingMethod = Navigator.demandMethod(clazz, "testComplex2");
-        MethodCallExpr methodCallExpr = testingMethod
-                .getBody()
-                .get()
-                .getStatements()
-                .get(0)
-                .asExpressionStmt()
-                .getExpression()
-                .asMethodCallExpr();
+        MethodCallExpr methodCallExpr = testingMethod.getBody().get().getStatements().get(0).asExpressionStmt()
+                .getExpression().asMethodCallExpr();
 
         // resolve method call expression
         ResolvedMethodDeclaration resolvedMethodDeclaration = methodCallExpr.resolve();
 
-        assertEquals(
-                "OverloadedMethods.complexOverloading2(java.lang.String...)",
-                resolvedMethodDeclaration.getQualifiedSignature());
+        assertEquals("OverloadedMethods.complexOverloading2(java.lang.String...)", resolvedMethodDeclaration.getQualifiedSignature());
     }
 
     @Test
@@ -891,14 +622,8 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         CompilationUnit cu = parseSample("OverloadedMethods");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "OverloadedMethods");
         MethodDeclaration testingMethod = Navigator.demandMethod(clazz, "testComplex3");
-        MethodCallExpr methodCallExpr = testingMethod
-                .getBody()
-                .get()
-                .getStatements()
-                .get(0)
-                .asExpressionStmt()
-                .getExpression()
-                .asMethodCallExpr();
+        MethodCallExpr methodCallExpr = testingMethod.getBody().get().getStatements().get(0).asExpressionStmt()
+                .getExpression().asMethodCallExpr();
 
         // resolve method call expression
         ResolvedMethodDeclaration resolvedMethodDeclaration = methodCallExpr.resolve();
@@ -915,19 +640,12 @@ class MethodsResolutionTest extends AbstractResolutionTest {
         CompilationUnit cu = parseSample("OverloadedMethods");
         ClassOrInterfaceDeclaration clazz = Navigator.demandClass(cu, "OverloadedMethods");
         MethodDeclaration testingMethod = Navigator.demandMethod(clazz, "testComplex4");
-        MethodCallExpr methodCallExpr = testingMethod
-                .getBody()
-                .get()
-                .getStatements()
-                .get(0)
-                .asExpressionStmt()
-                .getExpression()
-                .asMethodCallExpr();
+        MethodCallExpr methodCallExpr = testingMethod.getBody().get().getStatements().get(0).asExpressionStmt()
+                .getExpression().asMethodCallExpr();
 
         // resolve method call expression
         ResolvedMethodDeclaration resolvedMethodDeclaration = methodCallExpr.resolve();
 
-        assertEquals(
-                "OverloadedMethods.complexOverloading4(long, int)", resolvedMethodDeclaration.getQualifiedSignature());
+        assertEquals("OverloadedMethods.complexOverloading4(long, int)", resolvedMethodDeclaration.getQualifiedSignature());
     }
 }

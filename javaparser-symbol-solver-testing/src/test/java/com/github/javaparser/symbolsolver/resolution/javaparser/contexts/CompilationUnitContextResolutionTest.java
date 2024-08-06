@@ -21,11 +21,6 @@
 
 package com.github.javaparser.symbolsolver.resolution.javaparser.contexts;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.resolution.Context;
@@ -46,14 +41,20 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.MemoryTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.google.common.collect.ImmutableList;
-import java.io.IOException;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Federico Tomassetti
- * a */
+a */
 class CompilationUnitContextResolutionTest extends AbstractResolutionTest {
 
     private TypeSolver typeSolver;
@@ -107,9 +108,7 @@ class CompilationUnitContextResolutionTest extends AbstractResolutionTest {
         SymbolReference<? extends ResolvedValueDeclaration> ref = context.solveSymbol("out");
 
         assertEquals(true, ref.isSolved());
-        assertEquals(
-                "java.io.PrintStream",
-                ref.getCorrespondingDeclaration().getType().asReferenceType().getQualifiedName());
+        assertEquals("java.io.PrintStream", ref.getCorrespondingDeclaration().getType().asReferenceType().getQualifiedName());
     }
 
     @Test
@@ -123,9 +122,7 @@ class CompilationUnitContextResolutionTest extends AbstractResolutionTest {
         Context context = new CompilationUnitContext(cu, typeSolver);
         SymbolReference<? extends ResolvedValueDeclaration> ref = context.solveSymbol("err");
         assertEquals(true, ref.isSolved());
-        assertEquals(
-                "java.io.PrintStream",
-                ref.getCorrespondingDeclaration().getType().asReferenceType().getQualifiedName());
+        assertEquals("java.io.PrintStream", ref.getCorrespondingDeclaration().getType().asReferenceType().getQualifiedName());
     }
 
     @Test
@@ -135,9 +132,7 @@ class CompilationUnitContextResolutionTest extends AbstractResolutionTest {
 
         SymbolReference<? extends ResolvedValueDeclaration> ref = context.solveSymbol("java.lang.System.out");
         assertEquals(true, ref.isSolved());
-        assertEquals(
-                "java.io.PrintStream",
-                ref.getCorrespondingDeclaration().getType().asReferenceType().getQualifiedName());
+        assertEquals("java.io.PrintStream", ref.getCorrespondingDeclaration().getType().asReferenceType().getQualifiedName());
     }
 
     @Test
@@ -189,16 +184,13 @@ class CompilationUnitContextResolutionTest extends AbstractResolutionTest {
         SymbolReference<ResolvedTypeDeclaration> ref = context.solveType("OtherClassInSamePackage");
 
         assertEquals(true, ref.isSolved());
-        assertEquals(
-                "com.foo.OtherClassInSamePackage",
-                ref.getCorrespondingDeclaration().getQualifiedName());
+        assertEquals("com.foo.OtherClassInSamePackage", ref.getCorrespondingDeclaration().getQualifiedName());
     }
 
     @Test
     void solveTypeImported() throws ParseException, IOException {
         CompilationUnit cu = parseSample("CompilationUnitWithImports");
-        Context context =
-                new CompilationUnitContext(cu, new JarTypeSolver(adaptPath("src/test/resources/junit-4.8.1.jar")));
+        Context context = new CompilationUnitContext(cu, new JarTypeSolver(adaptPath("src/test/resources/junit-4.8.1.jar")));
 
         SymbolReference<ResolvedTypeDeclaration> ref = context.solveType("Assert");
         assertEquals(true, ref.isSolved());
@@ -208,8 +200,7 @@ class CompilationUnitContextResolutionTest extends AbstractResolutionTest {
     @Test
     void solveTypeNotImported() throws ParseException, IOException {
         CompilationUnit cu = parseSample("CompilationUnitWithImports");
-        Context context =
-                new CompilationUnitContext(cu, new JarTypeSolver(adaptPath("src/test/resources/junit-4.8.1.jar")));
+        Context context = new CompilationUnitContext(cu, new JarTypeSolver(adaptPath("src/test/resources/junit-4.8.1.jar")));
 
         SymbolReference<ResolvedTypeDeclaration> ref = context.solveType("org.junit.Assume");
         assertEquals(true, ref.isSolved());
@@ -226,16 +217,12 @@ class CompilationUnitContextResolutionTest extends AbstractResolutionTest {
 
         Context context = new CompilationUnitContext(cu, typeSolver);
 
-        SymbolReference<ResolvedMethodDeclaration> ref =
-                context.solveMethod("assertFalse", ImmutableList.of(ResolvedPrimitiveType.BOOLEAN), false);
+        SymbolReference<ResolvedMethodDeclaration> ref = context.solveMethod("assertFalse", ImmutableList.of(ResolvedPrimitiveType.BOOLEAN), false);
         assertEquals(true, ref.isSolved());
         assertEquals("assertFalse", ref.getCorrespondingDeclaration().getName());
         assertEquals(1, ref.getCorrespondingDeclaration().getNumberOfParams());
-        assertEquals(
-                "boolean",
-                ref.getCorrespondingDeclaration().getParam(0).getType().describe());
-        assertEquals(
-                true, ref.getCorrespondingDeclaration().getParam(0).getType().isPrimitive());
+        assertEquals("boolean", ref.getCorrespondingDeclaration().getParam(0).getType().describe());
+        assertEquals(true, ref.getCorrespondingDeclaration().getParam(0).getType().isPrimitive());
     }
 
     @Test
@@ -248,24 +235,13 @@ class CompilationUnitContextResolutionTest extends AbstractResolutionTest {
 
         Context context = new CompilationUnitContext(cu, typeSolver);
 
-        SymbolReference<ResolvedMethodDeclaration> ref =
-                context.solveMethod("assertEquals", ImmutableList.of(NullType.INSTANCE, NullType.INSTANCE), false);
+        SymbolReference<ResolvedMethodDeclaration> ref = context.solveMethod("assertEquals", ImmutableList.of(NullType.INSTANCE, NullType.INSTANCE), false);
         assertEquals(true, ref.isSolved());
         assertEquals("assertEquals", ref.getCorrespondingDeclaration().getName());
         assertEquals(2, ref.getCorrespondingDeclaration().getNumberOfParams());
-        assertEquals(
-                "java.lang.Object",
-                ref.getCorrespondingDeclaration()
-                        .getParam(0)
-                        .getType()
-                        .asReferenceType()
-                        .getQualifiedName());
-        assertEquals(
-                "java.lang.Object",
-                ref.getCorrespondingDeclaration()
-                        .getParam(1)
-                        .getType()
-                        .asReferenceType()
-                        .getQualifiedName());
+        assertEquals("java.lang.Object", ref.getCorrespondingDeclaration().getParam(0).getType().asReferenceType().getQualifiedName());
+        assertEquals("java.lang.Object", ref.getCorrespondingDeclaration().getParam(1).getType().asReferenceType().getQualifiedName());
+
     }
+
 }

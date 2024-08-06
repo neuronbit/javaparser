@@ -21,13 +21,14 @@
 
 package com.github.javaparser.symbolsolver.resolution.typeinference.constraintformulas;
 
-import static com.github.javaparser.symbolsolver.resolution.typeinference.TypeHelper.isProperType;
-
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.resolution.typeinference.BoundSet;
 import com.github.javaparser.symbolsolver.resolution.typeinference.ConstraintFormula;
 import com.github.javaparser.symbolsolver.resolution.typeinference.bounds.SameAsBound;
+
 import java.util.List;
+
+import static com.github.javaparser.symbolsolver.resolution.typeinference.TypeHelper.isProperType;
 
 /**
  * A type S is the same as a type T (§4.3.4), or a type argument S is the same as type argument T
@@ -65,16 +66,14 @@ public class TypeSameAsType extends ConstraintFormula {
                 return ReductionResult.falseResult();
             }
 
-            // - Otherwise, if S is an inference variable, α, and T is not a primitive type, the constraint reduces to
-            // the
+            // - Otherwise, if S is an inference variable, α, and T is not a primitive type, the constraint reduces to the
             //   bound α = T.
 
             if (S.isInferenceVariable() && !T.isPrimitive()) {
                 return ReductionResult.oneBound(new SameAsBound(S, T));
             }
 
-            // - Otherwise, if T is an inference variable, α, and S is not a primitive type, the constraint reduces to
-            // the
+            // - Otherwise, if T is an inference variable, α, and S is not a primitive type, the constraint reduces to the
             //   bound S = α.
 
             if (T.isInferenceVariable() && !S.isPrimitive()) {
@@ -82,15 +81,11 @@ public class TypeSameAsType extends ConstraintFormula {
             }
 
             // - Otherwise, if S and T are class or interface types with the same erasure, where S has
-            //   type arguments B1, ..., Bn and T has type arguments A1, ..., An, the constraint reduces to the
-            // following
+            //   type arguments B1, ..., Bn and T has type arguments A1, ..., An, the constraint reduces to the following
             //   new constraints: for all i (1 ≤ i ≤ n), ‹Bi = Ai›.
 
-            if (S.isReferenceType()
-                    && T.isReferenceType()
-                    && S.asReferenceType()
-                            .toRawType()
-                            .equals(T.asReferenceType().toRawType())) {
+            if (S.isReferenceType() && T.isReferenceType()
+                    && S.asReferenceType().toRawType().equals(T.asReferenceType().toRawType())) {
                 ReductionResult res = ReductionResult.empty();
                 List<ResolvedType> Bs = S.asReferenceType().typeParametersValues();
                 List<ResolvedType> As = T.asReferenceType().typeParametersValues();
@@ -104,7 +99,8 @@ public class TypeSameAsType extends ConstraintFormula {
 
             if (S.isArray() && T.isArray()) {
                 return ReductionResult.oneConstraint(new TypeSameAsType(
-                        S.asArrayType().getComponentType(), T.asArrayType().getComponentType()));
+                        S.asArrayType().getComponentType(),
+                        T.asArrayType().getComponentType()));
             }
 
             // - Otherwise, the constraint reduces to false.
@@ -131,6 +127,7 @@ public class TypeSameAsType extends ConstraintFormula {
         //
         // - Otherwise, the constraint reduces to false.
 
+
         throw new UnsupportedOperationException();
     }
 
@@ -154,6 +151,9 @@ public class TypeSameAsType extends ConstraintFormula {
 
     @Override
     public String toString() {
-        return "TypeSameAsType{" + "S=" + S + ", T=" + T + '}';
+        return "TypeSameAsType{" +
+                "S=" + S +
+                ", T=" + T +
+                '}';
     }
 }

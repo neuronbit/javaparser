@@ -25,8 +25,10 @@ import com.github.javaparser.ast.expr.TypePatternExpr;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFactory;
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class EnclosedExprContext extends AbstractJavaParserContext<EnclosedExpr> {
 
@@ -45,7 +47,7 @@ public class EnclosedExprContext extends AbstractJavaParserContext<EnclosedExpr>
          *         result.append(buffer, 0, numChars);
          *     }
          */
-        if (!wrappedNode.getInner().isAssignExpr()) {
+        if(!wrappedNode.getInner().isAssignExpr()) {
             // Propagate any pattern expressions "up" without modification
             Context innerContext = JavaParserFactory.getContext(wrappedNode.getInner(), typeSolver);
             if (!this.equals(innerContext)) {
@@ -66,7 +68,7 @@ public class EnclosedExprContext extends AbstractJavaParserContext<EnclosedExpr>
          *         result.append(buffer, 0, numChars);
          *     }
          */
-        if (!wrappedNode.getInner().isAssignExpr()) {
+        if(!wrappedNode.getInner().isAssignExpr()) {
             // Propagate any pattern expressions "up" without modification
             Context innerContext = JavaParserFactory.getContext(wrappedNode.getInner(), typeSolver);
             if (!this.equals(innerContext)) {
@@ -75,4 +77,5 @@ public class EnclosedExprContext extends AbstractJavaParserContext<EnclosedExpr>
         }
         return results;
     }
+
 }

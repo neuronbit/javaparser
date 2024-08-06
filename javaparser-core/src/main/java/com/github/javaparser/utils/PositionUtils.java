@@ -20,8 +20,6 @@
  */
 package com.github.javaparser.utils;
 
-import static java.lang.Integer.signum;
-
 import com.github.javaparser.Position;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Modifier;
@@ -32,8 +30,11 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
+
 import java.util.Comparator;
 import java.util.List;
+
+import static java.lang.Integer.signum;
 
 public final class PositionUtils {
 
@@ -108,37 +109,29 @@ public final class PositionUtils {
     }
 
     private static Node firstNonAnnotationNode(Node node) {
+
         if (node instanceof ClassOrInterfaceDeclaration) {
             // Modifiers appear before the class name --
             ClassOrInterfaceDeclaration casted = (ClassOrInterfaceDeclaration) node;
-            Modifier earliestModifier = casted.getModifiers().stream()
-                    .filter(modifier -> modifier.hasRange())
-                    .min(Comparator.comparing(o -> o.getRange().get().begin))
-                    .orElse(null);
+            Modifier earliestModifier = casted.getModifiers().stream().filter(modifier -> modifier.hasRange()).min(Comparator.comparing(o -> o.getRange().get().begin)).orElse(null);
             if (earliestModifier == null) {
                 return casted.getName();
             }
             return earliestModifier;
         }
-        if (node instanceof MethodDeclaration) {
+            if (node instanceof MethodDeclaration) {
             // Modifiers appear before the class name --
             MethodDeclaration casted = (MethodDeclaration) node;
-            Modifier earliestModifier = casted.getModifiers().stream()
-                    .filter(modifier -> modifier.hasRange())
-                    .min(Comparator.comparing(o -> o.getRange().get().begin))
-                    .orElse(null);
+            Modifier earliestModifier = casted.getModifiers().stream().filter(modifier -> modifier.hasRange()).min(Comparator.comparing(o -> o.getRange().get().begin)).orElse(null);
             if (earliestModifier == null) {
                 return casted.getType();
             }
             return earliestModifier;
         }
-        if (node instanceof FieldDeclaration) {
+            if (node instanceof FieldDeclaration) {
             // Modifiers appear before the class name --
             FieldDeclaration casted = (FieldDeclaration) node;
-            Modifier earliestModifier = casted.getModifiers().stream()
-                    .filter(modifier -> modifier.hasRange())
-                    .min(Comparator.comparing(o -> o.getRange().get().begin))
-                    .orElse(null);
+            Modifier earliestModifier = casted.getModifiers().stream().filter(modifier -> modifier.hasRange()).min(Comparator.comparing(o -> o.getRange().get().begin)).orElse(null);
             if (earliestModifier == null) {
                 return casted.getVariable(0).getType();
             }
@@ -159,12 +152,10 @@ public final class PositionUtils {
      */
     public static boolean nodeContains(Node container, Node other, boolean ignoringAnnotations) {
         if (!container.hasRange()) {
-            throw new IllegalArgumentException(
-                    "Cannot compare the positions of nodes if container node does not have a range.");
+            throw new IllegalArgumentException("Cannot compare the positions of nodes if container node does not have a range.");
         }
         if (!other.hasRange()) {
-            throw new IllegalArgumentException(
-                    "Cannot compare the positions of nodes if contained node does not have a range.");
+            throw new IllegalArgumentException("Cannot compare the positions of nodes if contained node does not have a range.");
         }
         // // FIXME: Not all nodes seem to have the compilation unit available?
         // if (!Objects.equals(container.findCompilationUnit(), other.findCompilationUnit())) {
@@ -187,11 +178,8 @@ public final class PositionUtils {
         // If the node is contained, but it comes immediately after the annotations,
         // let's not consider it contained (i.e. it must be "strictly contained").
         Node nodeWithoutAnnotations = firstNonAnnotationNode(container);
-        Range rangeWithoutAnnotations = container
-                .getRange()
-                .get()
-                .withBegin(nodeWithoutAnnotations.getBegin().get());
-        return // .contains(other.getRange().get());
-        rangeWithoutAnnotations.strictlyContains(other.getRange().get());
+        Range rangeWithoutAnnotations = container.getRange().get().withBegin(nodeWithoutAnnotations.getBegin().get());
+        return rangeWithoutAnnotations.// .contains(other.getRange().get());
+        strictlyContains(other.getRange().get());
     }
 }

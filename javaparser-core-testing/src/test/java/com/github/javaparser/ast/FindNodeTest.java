@@ -21,14 +21,15 @@
 
 package com.github.javaparser.ast;
 
-import static com.github.javaparser.StaticJavaParser.parse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
-import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
+
+import java.util.function.Predicate;
+
+import static com.github.javaparser.StaticJavaParser.parse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Some tests for finding descendant and ancestor nodes.
@@ -36,40 +37,30 @@ import org.junit.jupiter.api.Test;
 class FindNodeTest {
     @Test
     void testFindFirst() {
-        CompilationUnit cu = parse("class Foo {\n" + "    void foo() {\n"
-                + "        try {\n"
-                + "        } catch (Exception e) {\n"
-                + "        } finally {\n"
-                + "            try {\n"
-                + "            } catch (Exception e) {\n"
-                + "                foo();\n"
-                + "            } finally {\n"
-                + "            }\n"
-                + "        }\n"
-                + "\n"
-                + "    }\n"
-                + "}\n");
+        CompilationUnit cu = parse(
+                "class Foo {\n" +
+                        "    void foo() {\n" +
+                        "        try {\n" +
+                        "        } catch (Exception e) {\n" +
+                        "        } finally {\n" +
+                        "            try {\n" +
+                        "            } catch (Exception e) {\n" +
+                        "                foo();\n" +
+                        "            } finally {\n" +
+                        "            }\n" +
+                        "        }\n" +
+                        "\n" +
+                        "    }\n" +
+                        "}\n");
 
         // find the method call expression foo()
         MethodCallExpr actual = cu.findFirst(MethodCallExpr.class).orElse(null);
 
-        MethodCallExpr expected = cu.getType(0)
-                .getMember(0)
-                .asMethodDeclaration()
-                .getBody()
-                .get()
-                .getStatement(0)
-                .asTryStmt()
-                .getFinallyBlock()
-                .get()
-                .getStatement(0)
-                .asTryStmt()
-                .getCatchClauses()
-                .get(0)
-                .getBody()
-                .getStatement(0)
-                .asExpressionStmt()
-                .getExpression()
+        MethodCallExpr expected = cu.getType(0).getMember(0)
+                .asMethodDeclaration().getBody().get().getStatement(0)
+                .asTryStmt().getFinallyBlock().get().getStatement(0)
+                .asTryStmt().getCatchClauses().get(0).getBody().getStatement(0)
+                .asExpressionStmt().getExpression()
                 .asMethodCallExpr();
 
         assertEquals(expected, actual);
@@ -77,19 +68,21 @@ class FindNodeTest {
 
     @Test
     void testFindAncestralFinallyBlock() {
-        CompilationUnit cu = parse("class Foo {\n" + "    void foo() {\n"
-                + "        try {\n"
-                + "        } catch (Exception e) {\n"
-                + "        } finally {\n"
-                + "            try {\n"
-                + "            } catch (Exception e) {\n"
-                + "                foo();\n"
-                + "            } finally {\n"
-                + "            }\n"
-                + "        }\n"
-                + "\n"
-                + "    }\n"
-                + "}\n");
+        CompilationUnit cu = parse(
+                "class Foo {\n" +
+                        "    void foo() {\n" +
+                        "        try {\n" +
+                        "        } catch (Exception e) {\n" +
+                        "        } finally {\n" +
+                        "            try {\n" +
+                        "            } catch (Exception e) {\n" +
+                        "                foo();\n" +
+                        "            } finally {\n" +
+                        "            }\n" +
+                        "        }\n" +
+                        "\n" +
+                        "    }\n" +
+                        "}\n");
 
         // find the method call expression foo()
         MethodCallExpr methodCallExpr = cu.findFirst(MethodCallExpr.class).orElse(null);
@@ -102,19 +95,13 @@ class FindNodeTest {
             }
             return false;
         };
-        BlockStmt actual =
-                methodCallExpr.findAncestor(predicate, BlockStmt.class).orElse(null);
+        BlockStmt actual = methodCallExpr.findAncestor(predicate, BlockStmt.class).orElse(null);
 
-        BlockStmt expected = cu.getType(0)
-                .getMember(0)
-                .asMethodDeclaration()
-                .getBody()
-                .get()
-                .getStatement(0)
-                .asTryStmt()
-                .getFinallyBlock()
-                .get();
+        BlockStmt expected = cu.getType(0).getMember(0)
+                .asMethodDeclaration().getBody().get().getStatement(0)
+                .asTryStmt().getFinallyBlock().get();
 
         assertEquals(expected, actual);
     }
 }
+

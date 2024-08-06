@@ -24,6 +24,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.CharLiteralExpr;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,4 +45,5 @@ public final class ExtractingVisitors {
             }
         });
     }
+
 }

@@ -39,3 +39,4 @@ public class PrettyPrintingTest extends BasicJBehaveTest {
         super("**/pretty_printing*.story");
     }
 }
+

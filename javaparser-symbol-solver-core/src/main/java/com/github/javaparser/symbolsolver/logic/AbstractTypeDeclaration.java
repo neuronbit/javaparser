@@ -21,6 +21,10 @@
 
 package com.github.javaparser.symbolsolver.logic;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
@@ -29,9 +33,6 @@ import com.github.javaparser.resolution.logic.FunctionalInterfaceLogic;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.utils.Pair;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Common ancestor for most types.
@@ -40,12 +41,12 @@ import java.util.Set;
  */
 public abstract class AbstractTypeDeclaration implements ResolvedReferenceTypeDeclaration {
 
-    /*
-     * Returns all methods which have distinct "enhanced" signature declared in this type and all members.
-     * An "enhanced" signature include the return type which is used sometimes to identify functional interfaces.
-     * This is a different implementation from the previous one which returned all methods which have a distinct
-     * signature (based on method name and qualified parameter types)
-     */
+	/*
+	 * Returns all methods which have distinct "enhanced" signature declared in this type and all members.
+	 * An "enhanced" signature include the return type which is used sometimes to identify functional interfaces.
+	 * This is a different implementation from the previous one which returned all methods which have a distinct
+	 * signature (based on method name and qualified parameter types)
+	 */
     @Override
     public final Set<MethodUsage> getAllMethods() {
         Set<MethodUsage> methods = new HashSet<>();
@@ -62,8 +63,7 @@ public abstract class AbstractTypeDeclaration implements ResolvedReferenceTypeDe
         }
 
         for (ResolvedReferenceType ancestor : getAllAncestors()) {
-            List<Pair<ResolvedTypeParameterDeclaration, ResolvedType>> typeParametersMap =
-                    ancestor.getTypeParametersMap();
+            List<Pair<ResolvedTypeParameterDeclaration, ResolvedType>> typeParametersMap = ancestor.getTypeParametersMap();
             for (MethodUsage mu : ancestor.getDeclaredMethods()) {
                 // replace type parameters to be able to filter away overridden generified methods
                 MethodUsage methodUsage = mu;
@@ -87,4 +87,5 @@ public abstract class AbstractTypeDeclaration implements ResolvedReferenceTypeDe
     public final boolean isFunctionalInterface() {
         return FunctionalInterfaceLogic.getFunctionalMethod(this).isPresent();
     }
+
 }

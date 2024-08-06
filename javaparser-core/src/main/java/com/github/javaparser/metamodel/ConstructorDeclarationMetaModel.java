@@ -22,6 +22,7 @@ package com.github.javaparser.metamodel;
 
 import com.github.javaparser.ast.Generated;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+
 import java.util.Optional;
 
 /**
@@ -38,13 +39,7 @@ public class ConstructorDeclarationMetaModel extends CallableDeclarationMetaMode
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
     ConstructorDeclarationMetaModel(Optional<BaseNodeMetaModel> superBaseNodeMetaModel) {
-        super(
-                superBaseNodeMetaModel,
-                ConstructorDeclaration.class,
-                "ConstructorDeclaration",
-                "com.github.javaparser.ast.body",
-                false,
-                false);
+        super(superBaseNodeMetaModel, ConstructorDeclaration.class, "ConstructorDeclaration", "com.github.javaparser.ast.body", false, false);
     }
 
     public PropertyMetaModel bodyPropertyMetaModel;

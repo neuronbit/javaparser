@@ -20,6 +20,9 @@
  */
 package com.github.javaparser.resolution.declarations;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Declaration of a parameter.
  *
@@ -59,4 +62,8 @@ public interface ResolvedParameterDeclaration extends ResolvedValueDeclaration {
         }
         return getType().describe();
     }
+
+    boolean hasAnnotation(String typeName);
+
+    Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName);
 }

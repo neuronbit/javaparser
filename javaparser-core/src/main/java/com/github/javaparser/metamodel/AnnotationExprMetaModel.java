@@ -23,6 +23,7 @@ package com.github.javaparser.metamodel;
 import com.github.javaparser.ast.Generated;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.AnnotationExpr;
+
 import java.util.Optional;
 
 /**
@@ -39,23 +40,11 @@ public class AnnotationExprMetaModel extends ExpressionMetaModel {
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
     AnnotationExprMetaModel(Optional<BaseNodeMetaModel> superBaseNodeMetaModel) {
-        super(
-                superBaseNodeMetaModel,
-                AnnotationExpr.class,
-                "AnnotationExpr",
-                "com.github.javaparser.ast.expr",
-                true,
-                false);
+        super(superBaseNodeMetaModel, AnnotationExpr.class, "AnnotationExpr", "com.github.javaparser.ast.expr", true, false);
     }
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
-    protected AnnotationExprMetaModel(
-            Optional<BaseNodeMetaModel> superNodeMetaModel,
-            Class<? extends Node> type,
-            String name,
-            String packageName,
-            boolean isAbstract,
-            boolean hasWildcard) {
+    protected AnnotationExprMetaModel(Optional<BaseNodeMetaModel> superNodeMetaModel, Class<? extends Node> type, String name, String packageName, boolean isAbstract, boolean hasWildcard) {
         super(superNodeMetaModel, type, name, packageName, isAbstract, hasWildcard);
     }
 

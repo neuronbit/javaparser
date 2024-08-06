@@ -28,8 +28,9 @@ import com.github.javaparser.resolution.declarations.ResolvedParameterDeclaratio
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
-import java.util.List;
 import javassist.CtConstructor;
+
+import java.util.List;
 
 /**
  * @author Fred Lefévère-Laoide
@@ -47,9 +48,10 @@ public class JavassistConstructorDeclaration implements ResolvedConstructorDecla
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" + "ctConstructor="
-                + ctConstructor.getName() + ", typeSolver="
-                + typeSolver + '}';
+        return getClass().getSimpleName() + "{" +
+                "ctConstructor=" + ctConstructor.getName() +
+                ", typeSolver=" + typeSolver +
+                '}';
     }
 
     @Override
@@ -106,4 +108,5 @@ public class JavassistConstructorDeclaration implements ResolvedConstructorDecla
     public ResolvedType getSpecifiedException(int index) {
         return methodLikeAdaper.getSpecifiedException(index);
     }
+
 }

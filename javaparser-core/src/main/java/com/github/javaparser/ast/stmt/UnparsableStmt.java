@@ -20,8 +20,6 @@
  */
 package com.github.javaparser.ast.stmt;
 
-import static com.github.javaparser.ast.Node.Parsedness.UNPARSABLE;
-
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Generated;
@@ -30,8 +28,11 @@ import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
 import com.github.javaparser.metamodel.UnparsableStmtMetaModel;
+
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static com.github.javaparser.ast.Node.Parsedness.UNPARSABLE;
 
 /**
  * A statement that had parse errors.

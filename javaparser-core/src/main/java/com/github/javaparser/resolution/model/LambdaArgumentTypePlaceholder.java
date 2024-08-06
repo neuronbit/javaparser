@@ -18,6 +18,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
+
 package com.github.javaparser.resolution.model;
 
 import com.github.javaparser.resolution.declarations.ResolvedMethodLikeDeclaration;
@@ -32,7 +33,6 @@ import com.github.javaparser.resolution.types.ResolvedType;
 public class LambdaArgumentTypePlaceholder implements ResolvedType {
 
     private int pos;
-
     private SymbolReference<? extends ResolvedMethodLikeDeclaration> method;
 
     public LambdaArgumentTypePlaceholder(int pos) {
@@ -67,4 +67,5 @@ public class LambdaArgumentTypePlaceholder implements ResolvedType {
     public boolean isAssignableBy(ResolvedType other) {
         throw new UnsupportedOperationException();
     }
+
 }

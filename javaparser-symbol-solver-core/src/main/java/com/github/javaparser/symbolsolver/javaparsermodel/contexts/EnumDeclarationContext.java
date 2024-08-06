@@ -32,6 +32,7 @@ import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserEnumConstantDeclaration;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserEnumDeclaration;
+
 import java.util.List;
 
 /**
@@ -43,8 +44,8 @@ public class EnumDeclarationContext extends AbstractJavaParserContext<EnumDeclar
 
     public EnumDeclarationContext(EnumDeclaration wrappedNode, TypeSolver typeSolver) {
         super(wrappedNode, typeSolver);
-        this.javaParserTypeDeclarationAdapter =
-                new JavaParserTypeDeclarationAdapter(wrappedNode, typeSolver, getDeclaration(), this);
+        this.javaParserTypeDeclarationAdapter = new JavaParserTypeDeclarationAdapter(wrappedNode, typeSolver,
+                getDeclaration(), this);
     }
 
     @Override
@@ -72,8 +73,7 @@ public class EnumDeclarationContext extends AbstractJavaParserContext<EnumDeclar
     }
 
     @Override
-    public SymbolReference<ResolvedMethodDeclaration> solveMethod(
-            String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
+    public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> argumentsTypes, boolean staticOnly) {
         return javaParserTypeDeclarationAdapter.solveMethod(name, argumentsTypes, staticOnly);
     }
 

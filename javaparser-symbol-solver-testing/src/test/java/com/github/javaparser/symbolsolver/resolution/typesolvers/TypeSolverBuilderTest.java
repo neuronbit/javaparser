@@ -21,14 +21,15 @@
 
 package com.github.javaparser.symbolsolver.resolution.typesolvers;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import com.github.javaparser.resolution.TypeSolver;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class TypeSolverBuilderTest {
 
@@ -53,8 +54,7 @@ class TypeSolverBuilderTest {
         TypeSolver typeSolverToRegister = mock(TypeSolver.class);
 
         // Execute
-        TypeSolver createdTypeSolver =
-                typeSolverBuilder.with(typeSolverToRegister).build();
+        TypeSolver createdTypeSolver = typeSolverBuilder.with(typeSolverToRegister).build();
 
         // Assert
         assertEquals(typeSolverToRegister, createdTypeSolver);
@@ -71,8 +71,10 @@ class TypeSolverBuilderTest {
         TypeSolver typeSolverB = mock(TypeSolver.class);
 
         // Execute
-        TypeSolver createdTypeSolver =
-                typeSolverBuilder.with(typeSolverA).with(typeSolverB).build();
+        TypeSolver createdTypeSolver = typeSolverBuilder
+                .with(typeSolverA)
+                .with(typeSolverB)
+                .build();
 
         // Verify
         verify(typeSolverA).setParent(createdTypeSolver);
@@ -89,7 +91,9 @@ class TypeSolverBuilderTest {
     @Test
     void testBuild_withCurrentJREConfiguration() {
         // Execute
-        TypeSolver createdTypeSolver = typeSolverBuilder.withCurrentJRE().build();
+        TypeSolver createdTypeSolver = typeSolverBuilder
+                .withCurrentJRE()
+                .build();
 
         // Assert
         assertIsSolved(createdTypeSolver, "java.lang.String");
@@ -105,8 +109,9 @@ class TypeSolverBuilderTest {
     @Test
     void testBuild_withCurrentClassloaderConfiguration() {
         // Execute
-        TypeSolver createdTypeSolver =
-                typeSolverBuilder.withCurrentClassloader().build();
+        TypeSolver createdTypeSolver = typeSolverBuilder
+                .withCurrentClassloader()
+                .build();
 
         // Assert
         assertIsSolved(createdTypeSolver, "java.lang.String");
@@ -122,8 +127,9 @@ class TypeSolverBuilderTest {
     void testBuild_withJARConfiguration_fromString() throws IOException {
 
         // Execute
-        TypeSolver createdTypeSolver =
-                typeSolverBuilder.withJAR("src/test/resources/junit-4.8.1.jar").build();
+        TypeSolver createdTypeSolver = typeSolverBuilder
+                .withJAR("src/test/resources/junit-4.8.1.jar")
+                .build();
 
         // Assert
         assertIsSolved(createdTypeSolver, "org.junit.Test");
@@ -277,12 +283,12 @@ class TypeSolverBuilderTest {
         ClassLoader classLoader = TypeSolverBuilderTest.class.getClassLoader();
 
         // Execute
-        TypeSolver createdTypeSolver =
-                typeSolverBuilder.withClassLoader(classLoader).build();
+        TypeSolver createdTypeSolver = typeSolverBuilder
+                .withClassLoader(classLoader)
+                .build();
 
         // Assert
-        assertIsSolved(
-                createdTypeSolver, "com.github.javaparser.symbolsolver.resolution.typesolvers.TypeSolverBuilderTest");
+        assertIsSolved(createdTypeSolver, "com.github.javaparser.symbolsolver.resolution.typesolvers.TypeSolverBuilderTest");
         assertNotSolved(createdTypeSolver, "com.example.a.non.existing.Class");
     }
 
@@ -305,8 +311,7 @@ class TypeSolverBuilderTest {
      * @param className The class to find.
      */
     private static void assertNotSolved(TypeSolver typeSolver, String className) {
-        assertFalse(
-                typeSolver.hasType(className),
-                String.format("This type solver should not be able to solve type %s", className));
+        assertFalse(typeSolver.hasType(className), String.format("This type solver should not be able to solve type %s", className));
     }
+
 }

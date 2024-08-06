@@ -20,8 +20,6 @@
  */
 package com.github.javaparser.ast.expr;
 
-import static com.github.javaparser.utils.Utils.assertNotNull;
-
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Generated;
@@ -32,8 +30,11 @@ import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.metamodel.EnclosedExprMetaModel;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
+
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static com.github.javaparser.utils.Utils.assertNotNull;
 
 /**
  * An expression between ( ).
@@ -94,7 +95,8 @@ public class EnclosedExpr extends Expression {
             return this;
         }
         notifyPropertyChange(ObservableProperty.INNER, this.inner, inner);
-        if (this.inner != null) this.inner.setParentNode(null);
+        if (this.inner != null)
+            this.inner.setParentNode(null);
         this.inner = inner;
         setAsParentNodeOf(inner);
         return this;

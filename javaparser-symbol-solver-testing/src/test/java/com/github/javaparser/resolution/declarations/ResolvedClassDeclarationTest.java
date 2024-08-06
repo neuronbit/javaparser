@@ -21,13 +21,13 @@
 
 package com.github.javaparser.resolution.declarations;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
-
-public interface ResolvedClassDeclarationTest
-        extends ResolvedReferenceTypeDeclarationTest, ResolvedTypeParametrizableTest, HasAccessSpecifierTest {
+public interface ResolvedClassDeclarationTest extends ResolvedReferenceTypeDeclarationTest, ResolvedTypeParametrizableTest,
+        HasAccessSpecifierTest {
 
     @Override
     ResolvedClassDeclaration createValue();
@@ -56,4 +56,5 @@ public interface ResolvedClassDeclarationTest
     default void getAllInterfaces() {
         assertNotNull(createValue().getAllInterfaces());
     }
+
 }

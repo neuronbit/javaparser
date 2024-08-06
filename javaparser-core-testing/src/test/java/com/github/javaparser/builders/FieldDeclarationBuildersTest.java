@@ -21,16 +21,17 @@
 
 package com.github.javaparser.builders;
 
-import static com.github.javaparser.ast.type.PrimitiveType.intType;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
-import java.util.List;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static com.github.javaparser.ast.type.PrimitiveType.intType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FieldDeclarationBuildersTest {
     private final CompilationUnit cu = new CompilationUnit();
@@ -70,11 +71,8 @@ class FieldDeclarationBuildersTest {
         MethodDeclaration setter = methodsWithName.get(0);
         assertEquals("setMyField", setter.getNameAsString());
         assertEquals("int", setter.getParameter(0).getType().toString());
-        assertEquals(
-                ExpressionStmt.class, setter.getBody().get().getStatement(0).getClass());
-        assertEquals(
-                "this.myField = myField;",
-                setter.getBody().get().getStatement(0).toString());
+        assertEquals(ExpressionStmt.class, setter.getBody().get().getStatement(0).getClass());
+        assertEquals("this.myField = myField;", setter.getBody().get().getStatement(0).toString());
     }
 
     @Test
@@ -100,28 +98,26 @@ class FieldDeclarationBuildersTest {
         MethodDeclaration setter = methodsWithName.get(0);
         assertEquals("setMyField", setter.getNameAsString());
         assertEquals("int", setter.getParameter(0).getType().toString());
-        assertEquals(
-                ExpressionStmt.class, setter.getBody().get().getStatement(0).getClass());
-        assertEquals(
-                "this.myField = myField;",
-                setter.getBody().get().getStatement(0).toString());
+        assertEquals(ExpressionStmt.class, setter.getBody().get().getStatement(0).getClass());
+        assertEquals("this.myField = myField;", setter.getBody().get().getStatement(0).toString());
     }
 
     @Test
     void testCreateGetterWithANonValidField() {
         assertThrows(IllegalStateException.class, () -> {
             FieldDeclaration myPrivateField = testClass.addPrivateField(int.class, "myField");
-            myPrivateField.getVariables().add(new VariableDeclarator(intType(), "secondField"));
-            myPrivateField.createGetter();
-        });
-    }
+        myPrivateField.getVariables().add(new VariableDeclarator(intType(), "secondField"));
+        myPrivateField.createGetter();
+    });
+        }
 
     @Test
     void testCreateSetterWithANonValidField() {
         assertThrows(IllegalStateException.class, () -> {
             FieldDeclaration myPrivateField = testClass.addPrivateField(int.class, "myField");
-            myPrivateField.getVariables().add(new VariableDeclarator(intType(), "secondField"));
-            myPrivateField.createSetter();
-        });
-    }
+        myPrivateField.getVariables().add(new VariableDeclarator(intType(), "secondField"));
+        myPrivateField.createSetter();
+    });
+        }
+
 }

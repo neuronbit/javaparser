@@ -23,6 +23,7 @@ package com.github.javaparser.metamodel;
 import com.github.javaparser.ast.Generated;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.LiteralExpr;
+
 import java.util.Optional;
 
 /**
@@ -43,13 +44,7 @@ public class LiteralExprMetaModel extends ExpressionMetaModel {
     }
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
-    protected LiteralExprMetaModel(
-            Optional<BaseNodeMetaModel> superNodeMetaModel,
-            Class<? extends Node> type,
-            String name,
-            String packageName,
-            boolean isAbstract,
-            boolean hasWildcard) {
+    protected LiteralExprMetaModel(Optional<BaseNodeMetaModel> superNodeMetaModel, Class<? extends Node> type, String name, String packageName, boolean isAbstract, boolean hasWildcard) {
         super(superNodeMetaModel, type, name, packageName, isAbstract, hasWildcard);
     }
 }

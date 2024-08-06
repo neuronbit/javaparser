@@ -30,6 +30,7 @@ import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclar
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,15 +38,14 @@ import java.util.stream.Collectors;
 /**
  * @author Federico Tomassetti
  */
-public class JavaParserConstructorDeclaration<N extends ResolvedReferenceTypeDeclaration>
-        implements ResolvedConstructorDeclaration {
+public class JavaParserConstructorDeclaration<N extends ResolvedReferenceTypeDeclaration> implements ResolvedConstructorDeclaration {
 
     private N declaringType;
     private com.github.javaparser.ast.body.ConstructorDeclaration wrappedNode;
     private TypeSolver typeSolver;
 
-    JavaParserConstructorDeclaration(
-            N declaringType, com.github.javaparser.ast.body.ConstructorDeclaration wrappedNode, TypeSolver typeSolver) {
+    JavaParserConstructorDeclaration(N declaringType, com.github.javaparser.ast.body.ConstructorDeclaration wrappedNode,
+                                     TypeSolver typeSolver) {
         this.declaringType = declaringType;
         this.wrappedNode = wrappedNode;
         this.typeSolver = typeSolver;
@@ -64,8 +64,7 @@ public class JavaParserConstructorDeclaration<N extends ResolvedReferenceTypeDec
     @Override
     public ResolvedParameterDeclaration getParam(int i) {
         if (i < 0 || i >= getNumberOfParams()) {
-            throw new IllegalArgumentException(
-                    String.format("No param with index %d. Number of params: %d", i, getNumberOfParams()));
+            throw new IllegalArgumentException(String.format("No param with index %d. Number of params: %d", i, getNumberOfParams()));
         }
         return new JavaParserParameterDeclaration(wrappedNode.getParameters().get(i), typeSolver);
     }
@@ -83,7 +82,7 @@ public class JavaParserConstructorDeclaration<N extends ResolvedReferenceTypeDec
     public com.github.javaparser.ast.body.ConstructorDeclaration getWrappedNode() {
         return wrappedNode;
     }
-
+    
     @Override
     public AccessSpecifier accessSpecifier() {
         return wrappedNode.getAccessSpecifier();
@@ -91,9 +90,7 @@ public class JavaParserConstructorDeclaration<N extends ResolvedReferenceTypeDec
 
     @Override
     public List<ResolvedTypeParameterDeclaration> getTypeParameters() {
-        return this.wrappedNode.getTypeParameters().stream()
-                .map((astTp) -> new JavaParserTypeParameter(astTp, typeSolver))
-                .collect(Collectors.toList());
+        return this.wrappedNode.getTypeParameters().stream().map((astTp) -> new JavaParserTypeParameter(astTp, typeSolver)).collect(Collectors.toList());
     }
 
     @Override
@@ -104,8 +101,8 @@ public class JavaParserConstructorDeclaration<N extends ResolvedReferenceTypeDec
     @Override
     public ResolvedType getSpecifiedException(int index) {
         if (index < 0 || index >= getNumberOfSpecifiedExceptions()) {
-            throw new IllegalArgumentException(String.format(
-                    "No exception with index %d. Number of exceptions: %d", index, getNumberOfSpecifiedExceptions()));
+            throw new IllegalArgumentException(String.format("No exception with index %d. Number of exceptions: %d",
+                    index, getNumberOfSpecifiedExceptions()));
         }
         return JavaParserFacade.get(typeSolver)
                 .convert(wrappedNode.getThrownExceptions().get(index), wrappedNode);

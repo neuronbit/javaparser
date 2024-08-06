@@ -26,13 +26,14 @@ import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.symbolsolver.javassistmodel.JavassistFactory;
+import javassist.ClassPool;
+import javassist.NotFoundException;
+
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import javassist.ClassPool;
-import javassist.NotFoundException;
 
 /**
  * Will let the symbol solver look inside a jar file while solving types.
@@ -221,6 +222,7 @@ public class JarTypeSolver implements TypeSolver {
                     }
                 }
             }
+
         }
     }
 
@@ -265,8 +267,8 @@ public class JarTypeSolver implements TypeSolver {
             // The names in stored key should always be resolved.
             // But if for some reason this happen, the user is notified.
             throw new IllegalStateException(String.format(
-                    "Unable to get class with name %s from class pool."
-                            + "This was not suppose to happen, please report at https://github.com/javaparser/javaparser/issues",
+                    "Unable to get class with name %s from class pool." +
+                    "This was not suppose to happen, please report at https://github.com/javaparser/javaparser/issues",
                     storedKey));
         }
     }
@@ -279,4 +281,5 @@ public class JarTypeSolver implements TypeSolver {
         }
         throw new UnsolvedSymbolException(name);
     }
+
 }

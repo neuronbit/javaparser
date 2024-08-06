@@ -18,6 +18,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  */
+
 package com.github.javaparser.resolution.model.typesystem;
 
 import com.github.javaparser.resolution.types.ResolvedType;
@@ -61,7 +62,7 @@ public class NullType implements ResolvedType {
 
     @Override
     public boolean isAssignableBy(ResolvedType other) {
-        throw new UnsupportedOperationException(
-                "It does not make sense to assign a value to null, it can only be assigned");
+        throw new UnsupportedOperationException("It does not make sense to assign a value to null, it can only be assigned");
     }
+
 }

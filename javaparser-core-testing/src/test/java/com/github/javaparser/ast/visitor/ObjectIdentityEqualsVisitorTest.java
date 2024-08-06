@@ -933,4 +933,5 @@ class ObjectIdentityEqualsVisitorTest {
         Assertions.assertTrue(ObjectIdentityEqualsVisitor.equals(nodeA, nodeA));
         Assertions.assertFalse(ObjectIdentityEqualsVisitor.equals(nodeA, nodeB));
     }
+
 }

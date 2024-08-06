@@ -28,12 +28,12 @@ import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclar
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.resolution.types.ResolvedType;
+import javassist.CtBehavior;
+import javassist.bytecode.*;
+import javassist.bytecode.annotation.Annotation;
+
 import java.util.*;
 import java.util.stream.Collectors;
-import javassist.CtBehavior;
-import javassist.bytecode.BadBytecode;
-import javassist.bytecode.ExceptionsAttribute;
-import javassist.bytecode.SignatureAttribute;
 
 public class JavassistMethodLikeDeclarationAdapter {
 
@@ -43,8 +43,7 @@ public class JavassistMethodLikeDeclarationAdapter {
 
     private SignatureAttribute.MethodSignature methodSignature;
 
-    public JavassistMethodLikeDeclarationAdapter(
-            CtBehavior ctBehavior, TypeSolver typeSolver, ResolvedMethodLikeDeclaration declaration) {
+    public JavassistMethodLikeDeclarationAdapter(CtBehavior ctBehavior, TypeSolver typeSolver, ResolvedMethodLikeDeclaration declaration) {
         this.ctBehavior = ctBehavior;
         this.typeSolver = typeSolver;
         this.declaration = declaration;
@@ -71,9 +70,18 @@ public class JavassistMethodLikeDeclarationAdapter {
         }
 
         Optional<String> paramName = JavassistUtils.extractParameterName(ctBehavior, i);
-        ResolvedType type =
-                JavassistUtils.signatureTypeToType(methodSignature.getParameterTypes()[i], typeSolver, declaration);
-        return new JavassistParameterDeclaration(type, typeSolver, variadic, paramName.orElse(null));
+        ResolvedType type = JavassistUtils.signatureTypeToType(methodSignature.getParameterTypes()[i], typeSolver, declaration);
+        Annotation[][] annotations = null;
+
+        final MethodInfo methodInfo = ctBehavior.getMethodInfo();
+        ParameterAnnotationsAttribute parameterAttribute =
+                (ParameterAnnotationsAttribute) methodInfo.getAttribute(ParameterAnnotationsAttribute.visibleTag);
+
+        if (parameterAttribute != null) {
+            annotations = parameterAttribute.getAnnotations();
+        }
+
+        return new JavassistParameterDeclaration(type, typeSolver, variadic, paramName.orElse(null), null != annotations?annotations[i]:null);
     }
 
     public List<ResolvedTypeParameterDeclaration> getTypeParameters() {
@@ -102,14 +110,13 @@ public class JavassistMethodLikeDeclarationAdapter {
 
         ExceptionsAttribute exceptionsAttribute = ctBehavior.getMethodInfo().getExceptionsAttribute();
         if (exceptionsAttribute == null) {
-            throw new IllegalArgumentException(
-                    String.format("No exception with index %d. Number of exceptions: 0", index));
+            throw new IllegalArgumentException(String.format("No exception with index %d. Number of exceptions: 0", index));
         }
 
         String[] exceptions = exceptionsAttribute.getExceptions();
         if (exceptions == null || index >= exceptions.length) {
-            throw new IllegalArgumentException(String.format(
-                    "No exception with index %d. Number of exceptions: %d", index, getNumberOfSpecifiedExceptions()));
+            throw new IllegalArgumentException(String.format("No exception with index %d. Number of exceptions: %d",
+                    index, getNumberOfSpecifiedExceptions()));
         }
 
         ResolvedReferenceTypeDeclaration typeDeclaration = typeSolver.solveType(exceptions[index]);

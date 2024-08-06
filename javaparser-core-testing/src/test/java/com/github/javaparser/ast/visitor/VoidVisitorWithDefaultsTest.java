@@ -21,10 +21,6 @@
 
 package com.github.javaparser.ast.visitor;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.openMocks;
-
 import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.BlockComment;
@@ -38,6 +34,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 /**
  * This class contains the tests to validate VoidVisitorWithDefaults.
@@ -57,7 +57,9 @@ class VoidVisitorWithDefaultsTest {
         openMocks(this);
 
         argument = new Object();
-        visitor = spy(new VoidVisitorWithDefaults<Object>() {});
+        visitor = spy(
+            new VoidVisitorWithDefaults<Object>() {}
+        );
     }
 
     @Test
@@ -705,4 +707,5 @@ class VoidVisitorWithDefaultsTest {
         // Check if the original argument was passed to the default method
         assertSame(argument, argumentCaptor.getValue());
     }
+
 }

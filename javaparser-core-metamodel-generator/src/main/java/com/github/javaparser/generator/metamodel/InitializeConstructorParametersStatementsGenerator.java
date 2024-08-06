@@ -21,18 +21,19 @@
 
 package com.github.javaparser.generator.metamodel;
 
-import static com.github.javaparser.StaticJavaParser.parseStatement;
-import static com.github.javaparser.generator.metamodel.MetaModelGenerator.nodeMetaModelFieldName;
-import static com.github.javaparser.generator.metamodel.MetaModelGenerator.propertyMetaModelFieldName;
-import static com.github.javaparser.utils.CodeGenerationUtils.f;
-
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.stmt.Statement;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+
+import static com.github.javaparser.StaticJavaParser.parseStatement;
+import static com.github.javaparser.generator.metamodel.MetaModelGenerator.nodeMetaModelFieldName;
+import static com.github.javaparser.generator.metamodel.MetaModelGenerator.propertyMetaModelFieldName;
+import static com.github.javaparser.utils.CodeGenerationUtils.f;
 
 class InitializeConstructorParametersStatementsGenerator {
     void generate(Class<? extends Node> nodeClass, NodeList<Statement> initializeConstructorParametersStatements) {
@@ -43,8 +44,7 @@ class InitializeConstructorParametersStatementsGenerator {
         for (java.lang.reflect.Parameter parameter : constructor.getParameters()) {
             Field field = findFieldInClass(nodeClass, parameter.getName());
 
-            String addFieldStatement = f(
-                    "%s.getConstructorParameters().add(%s.%s);",
+            String addFieldStatement = f("%s.getConstructorParameters().add(%s.%s);",
                     nodeMetaModelFieldName(nodeClass),
                     nodeMetaModelFieldName(field.getDeclaringClass()),
                     propertyMetaModelFieldName(field));
@@ -63,8 +63,7 @@ class InitializeConstructorParametersStatementsGenerator {
             }
             searchClass = searchClass.getSuperclass();
         } while (searchClass != null);
-        throw new AssertionError(
-                f("Couldn't find constructor parameter %s as a field, class %s", name, nodeClass.getSimpleName()));
+        throw new AssertionError(f("Couldn't find constructor parameter %s as a field, class %s", name, nodeClass.getSimpleName()));
     }
 
     private Constructor<?> findAllFieldsConstructor(Class<? extends Node> nodeClass) {
@@ -75,7 +74,6 @@ class InitializeConstructorParametersStatementsGenerator {
                 }
             }
         }
-        throw new AssertionError(
-                f("Node class %s has no constructor annotated with @AllFieldsConstructor", nodeClass.getSimpleName()));
+        throw new AssertionError(f("Node class %s has no constructor annotated with @AllFieldsConstructor", nodeClass.getSimpleName()));
     }
 }

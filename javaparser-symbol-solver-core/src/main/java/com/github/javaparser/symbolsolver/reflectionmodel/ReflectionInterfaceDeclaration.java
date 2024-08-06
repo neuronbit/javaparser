@@ -21,8 +21,13 @@
 
 package com.github.javaparser.symbolsolver.reflectionmodel;
 
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import com.github.javaparser.ast.AccessSpecifier;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.MethodUsage;
 import com.github.javaparser.resolution.TypeSolver;
@@ -39,18 +44,13 @@ import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.core.resolution.MethodUsageResolutionCapability;
 import com.github.javaparser.symbolsolver.core.resolution.SymbolResolutionCapability;
 import com.github.javaparser.symbolsolver.logic.AbstractTypeDeclaration;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Federico Tomassetti
  */
 public class ReflectionInterfaceDeclaration extends AbstractTypeDeclaration
-        implements ResolvedInterfaceDeclaration,
-                MethodResolutionCapability,
-                MethodUsageResolutionCapability,
-                SymbolResolutionCapability {
+        implements ResolvedInterfaceDeclaration, MethodResolutionCapability, MethodUsageResolutionCapability,
+        SymbolResolutionCapability {
 
     ///
     /// Fields
@@ -107,14 +107,16 @@ public class ReflectionInterfaceDeclaration extends AbstractTypeDeclaration
 
     @Override
     @Deprecated
-    public SymbolReference<ResolvedMethodDeclaration> solveMethod(
-            String name, List<ResolvedType> parameterTypes, boolean staticOnly) {
-        return ReflectionMethodResolutionLogic.solveMethod(name, parameterTypes, staticOnly, typeSolver, this, clazz);
+    public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> parameterTypes, boolean staticOnly) {
+        return ReflectionMethodResolutionLogic.solveMethod(name, parameterTypes, staticOnly,
+                typeSolver,this, clazz);
     }
 
     @Override
     public String toString() {
-        return "ReflectionInterfaceDeclaration{" + "clazz=" + clazz.getCanonicalName() + '}';
+        return "ReflectionInterfaceDeclaration{" +
+                "clazz=" + clazz.getCanonicalName() +
+                '}';
     }
 
     public ResolvedType getUsage(Node node) {
@@ -139,13 +141,10 @@ public class ReflectionInterfaceDeclaration extends AbstractTypeDeclaration
     }
 
     @Override
-    public Optional<MethodUsage> solveMethodAsUsage(
-            String name,
-            List<ResolvedType> parameterTypes,
-            Context invokationContext,
-            List<ResolvedType> typeParameterValues) {
-        Optional<MethodUsage> res = ReflectionMethodResolutionLogic.solveMethodAsUsage(
-                name, parameterTypes, typeSolver, invokationContext, typeParameterValues, this, clazz);
+	public Optional<MethodUsage> solveMethodAsUsage(String name, List<ResolvedType> parameterTypes,
+                                                    Context invokationContext, List<ResolvedType> typeParameterValues) {
+        Optional<MethodUsage> res = ReflectionMethodResolutionLogic.solveMethodAsUsage(name, parameterTypes, typeSolver, invokationContext,
+                typeParameterValues, this, clazz);
         if (res.isPresent()) {
             // We have to replace method type typeParametersValues here
             InferenceContext inferenceContext = new InferenceContext(typeSolver);
@@ -161,7 +160,7 @@ public class ReflectionInterfaceDeclaration extends AbstractTypeDeclaration
             }
             try {
                 ResolvedType returnType = inferenceContext.addSingle(methodUsage.returnType());
-                for (int j = 0; j < parameters.size(); j++) {
+                for (int j=0;j<parameters.size();j++) {
                     methodUsage = methodUsage.replaceParamType(j, inferenceContext.resolve(parameters.get(j)));
                 }
                 methodUsage = methodUsage.replaceReturnType(inferenceContext.resolve(returnType));
@@ -215,7 +214,7 @@ public class ReflectionInterfaceDeclaration extends AbstractTypeDeclaration
         }
         if (type instanceof ReferenceTypeImpl) {
             ReferenceTypeImpl otherTypeDeclaration = (ReferenceTypeImpl) type;
-            if (otherTypeDeclaration.getTypeDeclaration().isPresent()) {
+            if(otherTypeDeclaration.getTypeDeclaration().isPresent()) {
                 return otherTypeDeclaration.getTypeDeclaration().get().canBeAssignedTo(this);
             }
         }
@@ -319,5 +318,36 @@ public class ReflectionInterfaceDeclaration extends AbstractTypeDeclaration
     @Override
     public List<ResolvedConstructorDeclaration> getConstructors() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<ResolvedAnnotationExpr> getAnnotations() {
+        return Arrays.stream(clazz.getAnnotations()).map(ReflectionResolvedAnnotationExpr::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        if (typeName.contains(".")) {
+            String simpleName = typeName.substring(typeName.lastIndexOf('.') + 1);
+            return Optional.of(Arrays.stream(this.clazz.getAnnotations())
+                    .filter(a -> a.annotationType().getName().equals(simpleName) || a.annotationType().getCanonicalName().equals(typeName))
+                    .map(ReflectionResolvedAnnotationExpr::new)
+                    .collect(Collectors.toList()));
+        } else {
+            return Optional.of(Arrays.stream(this.clazz.getAnnotations())
+                    .filter(a -> a.annotationType().getName().equals(typeName))
+                    .map(ReflectionResolvedAnnotationExpr::new)
+                    .collect(Collectors.toList()));
+        }
+    }
+
+    @Override
+    public boolean setJavadoc(Javadoc javadoc) {
+        return false;
     }
 }

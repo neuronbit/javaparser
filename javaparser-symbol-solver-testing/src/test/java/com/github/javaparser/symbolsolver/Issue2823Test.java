@@ -20,6 +20,10 @@
 
 package com.github.javaparser.symbolsolver;
 
+import java.nio.file.Path;
+
+import org.junit.jupiter.api.Test;
+
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -28,8 +32,6 @@ import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
-import java.nio.file.Path;
-import org.junit.jupiter.api.Test;
 
 public class Issue2823Test extends AbstractSymbolResolutionTest {
 
@@ -39,8 +41,8 @@ public class Issue2823Test extends AbstractSymbolResolutionTest {
         TypeSolver reflectionTypeSolver = new ReflectionTypeSolver();
         JavaParserTypeSolver javaParserTypeSolver = new JavaParserTypeSolver(testRoot);
         CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver(reflectionTypeSolver, javaParserTypeSolver);
-        ParserConfiguration configuration =
-                new ParserConfiguration().setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
+        ParserConfiguration configuration = new ParserConfiguration()
+                .setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
         StaticJavaParser.setConfiguration(configuration);
 
         String src = "import java.util.Optional;\n"
@@ -57,5 +59,6 @@ public class Issue2823Test extends AbstractSymbolResolutionTest {
 
         // verify there is no exception thrown when we try to resolve all field access expressions
         cu.findAll(FieldAccessExpr.class).forEach(fd -> fd.resolve());
+
     }
 }

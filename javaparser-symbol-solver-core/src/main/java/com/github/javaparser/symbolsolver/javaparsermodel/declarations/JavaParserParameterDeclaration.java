@@ -22,8 +22,12 @@
 package com.github.javaparser.symbolsolver.javaparsermodel.declarations;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.resolution.TypeSolver;
+import com.github.javaparser.resolution.declarations.ResolvedAnnotationExpr;
+import com.github.javaparser.resolution.declarations.ResolvedDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedParameterDeclaration;
 import com.github.javaparser.resolution.model.Value;
 import com.github.javaparser.resolution.types.ResolvedArrayType;
@@ -31,6 +35,9 @@ import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFactory;
 import com.github.javaparser.symbolsolver.javaparsermodel.contexts.LambdaExprContext;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -58,10 +65,8 @@ public class JavaParserParameterDeclaration implements ResolvedParameterDeclarat
 
     @Override
     public ResolvedType getType() {
-        if (wrappedNode.getType().isUnknownType()
-                && JavaParserFactory.getContext(wrappedNode, typeSolver) instanceof LambdaExprContext) {
-            Optional<Value> value = JavaParserFactory.getContext(wrappedNode, typeSolver)
-                    .solveSymbolAsValue(wrappedNode.getNameAsString());
+        if (wrappedNode.getType().isUnknownType() && JavaParserFactory.getContext(wrappedNode, typeSolver) instanceof LambdaExprContext) {
+            Optional<Value> value = JavaParserFactory.getContext(wrappedNode, typeSolver).solveSymbolAsValue(wrappedNode.getNameAsString());
             if (value.isPresent()) {
                 return value.get().getType();
             }
@@ -78,6 +83,7 @@ public class JavaParserParameterDeclaration implements ResolvedParameterDeclarat
      *
      * @return A visitable JavaParser node wrapped by this object.
      */
+
     public Parameter getWrappedNode() {
         return wrappedNode;
     }
@@ -85,5 +91,27 @@ public class JavaParserParameterDeclaration implements ResolvedParameterDeclarat
     @Override
     public Optional<Node> toAst() {
         return Optional.of(wrappedNode);
+    }
+
+    @Override
+    public boolean hasAnnotation(String typeName) {
+        if (typeName.contains(".")) {
+            String simpleName = typeName.substring(typeName.lastIndexOf('.') + 1);
+            return wrappedNode.getAnnotationByName(simpleName).isPresent() || wrappedNode.getAnnotationByName(typeName).isPresent();
+        } else {
+            return wrappedNode.getAnnotationByName(typeName).isPresent();
+        }
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        final NodeList<AnnotationExpr> annotations = wrappedNode.getAnnotations();
+        final List<ResolvedAnnotationExpr> result = new ArrayList<>(annotations.size());
+        for (AnnotationExpr annotation : annotations) {
+            if (ResolvedDeclaration.isMatch(typeName, annotation.getName().getIdentifier())) {
+                result.add(new JavaParserResolvedAnnotationExpr(annotation, typeSolver));
+            }
+        }
+        return Optional.of(result);
     }
 }

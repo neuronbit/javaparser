@@ -21,15 +21,23 @@
 
 package com.github.javaparser.symbolsolver.javaparsermodel.declarations;
 
-import static com.github.javaparser.resolution.Navigator.demandParentNode;
-
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.TypeSolver;
+import com.github.javaparser.resolution.declarations.ResolvedAnnotationExpr;
+import com.github.javaparser.resolution.declarations.ResolvedDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedEnumConstantDeclaration;
 import com.github.javaparser.resolution.model.typesystem.ReferenceTypeImpl;
 import com.github.javaparser.resolution.types.ResolvedType;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import static com.github.javaparser.resolution.Navigator.demandParentNode;
 
 /**
  * @author Federico Tomassetti
@@ -39,16 +47,14 @@ public class JavaParserEnumConstantDeclaration implements ResolvedEnumConstantDe
     private TypeSolver typeSolver;
     private com.github.javaparser.ast.body.EnumConstantDeclaration wrappedNode;
 
-    public JavaParserEnumConstantDeclaration(
-            com.github.javaparser.ast.body.EnumConstantDeclaration wrappedNode, TypeSolver typeSolver) {
+    public JavaParserEnumConstantDeclaration(com.github.javaparser.ast.body.EnumConstantDeclaration wrappedNode, TypeSolver typeSolver) {
         this.wrappedNode = wrappedNode;
         this.typeSolver = typeSolver;
     }
 
     @Override
     public ResolvedType getType() {
-        return new ReferenceTypeImpl(
-                new JavaParserEnumDeclaration((EnumDeclaration) demandParentNode(wrappedNode), typeSolver));
+        return new ReferenceTypeImpl(new JavaParserEnumDeclaration((EnumDeclaration) demandParentNode(wrappedNode), typeSolver));
     }
 
     @Override
@@ -68,5 +74,22 @@ public class JavaParserEnumConstantDeclaration implements ResolvedEnumConstantDe
     @Override
     public Optional<Node> toAst() {
         return Optional.of(wrappedNode);
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        final NodeList<AnnotationExpr> annotations = wrappedNode.getAnnotations();
+        final List<ResolvedAnnotationExpr> result = new ArrayList<>(annotations.size());
+        for (AnnotationExpr annotation : annotations) {
+            if (ResolvedDeclaration.isMatch(typeName, annotation.getName().getIdentifier())) {
+                result.add(new JavaParserResolvedAnnotationExpr(annotation, typeSolver));
+            }
+        }
+        return Optional.of(result);
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return wrappedNode.getJavadoc();
     }
 }

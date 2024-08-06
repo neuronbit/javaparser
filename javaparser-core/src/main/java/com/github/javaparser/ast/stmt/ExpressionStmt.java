@@ -20,8 +20,6 @@
  */
 package com.github.javaparser.ast.stmt;
 
-import static com.github.javaparser.utils.Utils.assertNotNull;
-
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.AllFieldsConstructor;
 import com.github.javaparser.ast.Generated;
@@ -35,8 +33,11 @@ import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.metamodel.ExpressionStmtMetaModel;
 import com.github.javaparser.metamodel.JavaParserMetaModel;
+
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static com.github.javaparser.utils.Utils.assertNotNull;
 
 /**
  * Used to wrap an expression so that it can take the place of a statement.
@@ -90,7 +91,8 @@ public class ExpressionStmt extends Statement implements NodeWithExpression<Expr
             return this;
         }
         notifyPropertyChange(ObservableProperty.EXPRESSION, this.expression, expression);
-        if (this.expression != null) this.expression.setParentNode(null);
+        if (this.expression != null)
+            this.expression.setParentNode(null);
         this.expression = expression;
         setAsParentNodeOf(expression);
         return this;

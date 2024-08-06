@@ -20,6 +20,11 @@
  */
 package com.github.javaparser.resolution.declarations;
 
+import com.github.javaparser.javadoc.Javadoc;
+
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Declaration of a field.
  *
@@ -51,4 +56,19 @@ public interface ResolvedFieldDeclaration extends ResolvedValueDeclaration, HasA
      * The type on which this field has been declared
      */
     ResolvedTypeDeclaration declaringType();
+
+    /**
+     * Is it field transient?
+     * @return true if it has transient modifier
+     */
+    boolean isTransient();
+
+
+    Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName);
+
+    Object getInitialValue();
+
+    Optional<Javadoc> getJavadoc();
+
+    List<ResolvedAnnotationExpr> getAnnotations();
 }

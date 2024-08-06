@@ -22,8 +22,11 @@
 package com.github.javaparser.symbolsolver.javaparsermodel.declarations;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
@@ -34,6 +37,7 @@ import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.logic.AbstractTypeDeclaration;
+
 import java.util.*;
 
 /**
@@ -75,7 +79,9 @@ public class JavaParserTypeVariableDeclaration extends AbstractTypeDeclaration {
 
     @Override
     public String toString() {
-        return "JavaParserTypeVariableDeclaration{" + wrappedNode.getName() + '}';
+        return "JavaParserTypeVariableDeclaration{" +
+                wrappedNode.getName() +
+                '}';
     }
 
     public SymbolReference<ResolvedMethodDeclaration> solveMethod(String name, List<ResolvedType> parameterTypes) {
@@ -89,8 +95,7 @@ public class JavaParserTypeVariableDeclaration extends AbstractTypeDeclaration {
     @Override
     public boolean isAssignableBy(ResolvedType type) {
         if (type.isTypeVariable()) {
-            throw new UnsupportedOperationException(
-                    "Is this type variable declaration assignable by " + type.describe());
+            throw new UnsupportedOperationException("Is this type variable declaration assignable by " + type.describe());
         }
         throw new UnsupportedOperationException("Is this type variable declaration assignable by " + type);
     }
@@ -125,16 +130,16 @@ public class JavaParserTypeVariableDeclaration extends AbstractTypeDeclaration {
         }
         List<ResolvedReferenceType> ancestors = new ArrayList<>();
         for (ClassOrInterfaceType type : wrappedNode.getTypeBound()) {
-            try {
-                ResolvedType resolvedType = JavaParserFacade.get(typeSolver).convertToUsage(type);
-                ancestors.add(resolvedType.asReferenceType());
-            } catch (UnsolvedSymbolException e) {
-                if (!acceptIncompleteList) {
-                    // Only throw if an incomplete ancestor list is unacceptable.
-                    throw e;
+                try {
+                    ResolvedType resolvedType = JavaParserFacade.get(typeSolver).convertToUsage(type);
+                    ancestors.add(resolvedType.asReferenceType());
+                } catch (UnsolvedSymbolException e) {
+                    if (!acceptIncompleteList) {
+                        // Only throw if an incomplete ancestor list is unacceptable.
+                        throw e;
+                    }
                 }
             }
-        }
         return ancestors;
     }
 
@@ -200,5 +205,38 @@ public class JavaParserTypeVariableDeclaration extends AbstractTypeDeclaration {
     @Override
     public Optional<Node> toAst() {
         return Optional.of(wrappedNode);
+    }
+
+    @Override
+    public Optional<Javadoc> getJavadoc() {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<ResolvedAnnotationExpr> getAnnotations() {
+        final NodeList<AnnotationExpr> annotations = wrappedNode.getAnnotations();
+        final List<ResolvedAnnotationExpr> result = new ArrayList<>(annotations.size());
+        for (AnnotationExpr annotation : annotations) {
+            result.add(new JavaParserResolvedAnnotationExpr(annotation, typeSolver));
+        }
+        return result;
+    }
+
+    @Override
+    public Optional<List<ResolvedAnnotationExpr>> getAnnotation(String typeName) {
+        final NodeList<AnnotationExpr> annotations = wrappedNode.getAnnotations();
+        final List<ResolvedAnnotationExpr> result = new ArrayList<>(annotations.size());
+        for (AnnotationExpr annotation : annotations) {
+            if (ResolvedDeclaration.isMatch(typeName, annotation.getName().getIdentifier())) {
+                result.add(new JavaParserResolvedAnnotationExpr(annotation, typeSolver));
+            }
+        }
+        return Optional.of(result);
+    }
+
+    @Override
+    public boolean setJavadoc(Javadoc javadoc) {
+        //TODO spearwang 2024/6/4: javadoc
+        return false;
     }
 }

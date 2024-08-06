@@ -33,6 +33,7 @@ import com.github.javaparser.metamodel.UnknownTypeMetaModel;
 import com.github.javaparser.resolution.Context;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -143,8 +144,8 @@ public class UnknownType extends Type {
      *
      * @return The type resolved.
      */
-    @Override
-    public ResolvedType convertToUsage(Context context) {
-        throw new IllegalArgumentException("Inferred lambda parameter type");
-    }
+	@Override
+	public ResolvedType convertToUsage(Context context) {
+		throw new IllegalArgumentException("Inferred lambda parameter type");
+	}
 }

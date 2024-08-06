@@ -21,10 +21,6 @@
 
 package com.github.javaparser.printer.lexicalpreservation.transformations.ast.body;
 
-import static com.github.javaparser.ast.Modifier.Keyword.PROTECTED;
-import static com.github.javaparser.ast.Modifier.Keyword.PUBLIC;
-import static com.github.javaparser.ast.Modifier.createModifierList;
-
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -33,6 +29,10 @@ import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.printer.lexicalpreservation.AbstractLexicalPreservingTest;
 import org.junit.jupiter.api.Test;
+
+import static com.github.javaparser.ast.Modifier.Keyword.PROTECTED;
+import static com.github.javaparser.ast.Modifier.Keyword.PUBLIC;
+import static com.github.javaparser.ast.Modifier.createModifierList;
 
 /**
  * Transforming ConstructorDeclaration and verifying the LexicalPreservation works as expected.

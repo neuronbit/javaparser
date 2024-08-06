@@ -22,6 +22,7 @@ package com.github.javaparser.metamodel;
 
 import com.github.javaparser.ast.Generated;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
+
 import java.util.Optional;
 
 /**
@@ -38,13 +39,7 @@ public class ExpressionStmtMetaModel extends StatementMetaModel {
 
     @Generated("com.github.javaparser.generator.metamodel.NodeMetaModelGenerator")
     ExpressionStmtMetaModel(Optional<BaseNodeMetaModel> superBaseNodeMetaModel) {
-        super(
-                superBaseNodeMetaModel,
-                ExpressionStmt.class,
-                "ExpressionStmt",
-                "com.github.javaparser.ast.stmt",
-                false,
-                false);
+        super(superBaseNodeMetaModel, ExpressionStmt.class, "ExpressionStmt", "com.github.javaparser.ast.stmt", false, false);
     }
 
     public PropertyMetaModel expressionPropertyMetaModel;
